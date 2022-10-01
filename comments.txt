@@ -58,4 +58,41 @@ BaseUserManager
     * Methods we'll define
         * create_user: called when creating user
         * create_superuser: userd by the CLI to create a superuser (admin)
-    
+
+How to enable Django admin
+    * Enabled per model
+    * inside admin.py
+        * admin.site.register(Model_we_create)
+
+Customising
+    * Create class based off ModelAdmin or UserAdmin
+    * Overrate/set class variables
+Changing list of objects
+    * ordering : change order items appear
+    * list_display: fields to appear in list 
+Add/Update page
+    * fieldsets: control layout of page
+    * readonly_fields: fields that cannot be changed
+Add page
+    * add_fields: fiealds displayed only on add page
+Why documentation ? 
+    * APIs are designed for developers to use
+    * Need to know how to use it
+    * An API is only as good as its documentation
+What to document ?
+    * Everything needed to use the API
+    * Available endpoints (paths)
+        * /api/recipes
+    * Supported methods
+        * GET, POST, PUT, PATCH, DELETE
+    * Format of payloads (inputs)
+        * Parameters
+        * Post JSON format
+    * Authentication process
+Options for documentation
+    * Manual
+        * Word doc
+        * Markdown
+    * Automated
+        * Use metadata from code (comments)
+        * Generate documentation pages
