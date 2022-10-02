@@ -96,3 +96,32 @@ Options for documentation
     * Automated
         * Use metadata from code (comments)
         * Generate documentation pages
+Docs in DRF
+    * Auto generate docs (with third party library)
+        * drf-spectacular
+        * Generate schema
+        * Browsable web interface
+            * Make test request
+            * Handle auth
+How it works
+    * Generate "schema" file
+    * Parse schema into GUI
+OpenAPI Schema
+    * Standard for describing APIs
+    * Popular in industry
+    * Supported by most API documentation tools
+    * Uses popular formats YAML/JSON
+Using a Schema
+    * Download and run in local Swagger instance
+    * Serve Swagger with API
+Types of authentication
+    * Basic
+        * Send username and password with each request
+    * Token
+        * Use a token in the HTTP header
+    * JSON Web Token (JWT)
+        * Use an access token and refresh token
+Session
+    * Use cookies
+
+    
