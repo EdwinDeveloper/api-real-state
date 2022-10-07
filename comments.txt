@@ -124,4 +124,26 @@ Types of authentication
 Session
     * Use cookies
 
-    
+APIView vs Viewsets
+    What is a view ? 
+        * Handles a request made to a URL
+        * Django uses functions
+        * Django Rest Framework uses classes
+            * Reusable logic
+            * Override behavior
+        * Django Rest Framework also support decorators
+        * APIView and Viewsets = Djando Rest Framework base classes
+APIView
+    * Focused around HTTP methods
+    * Class methods for HTTP methods
+        * GET, POST, PUT, PATCH, DELETE
+    * Provite flexibility over URLs and logic
+    * Useful for non CRUD APIs
+        * Avoid simple Create, Read, Update, Delete APIs
+        * Bespoke logic (eg: auth, jobs, external apis)
+Viewsets
+    * Focused around actions
+        * Retrieve, list, update, partial update, destroy
+    * Map to Django models
+    * Use Routers to generate URLs
+    * Gread for CRUD operations on models
