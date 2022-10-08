@@ -13,6 +13,7 @@ from recipe import views
 
 router = DefaultRouter()  # We create a default router
 router.register('recipes', views.RecipeViewSets)
+router.register('tags', views.TagViewSet)
 # Above we create a new endpoint call recipes
 
 app_name = 'recipe'
