@@ -3,7 +3,7 @@ Views for the recipes APIs
 """
 from rest_framework import (
     viewsets,
-    mixins
+    mixins,
 )
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -39,12 +39,17 @@ class RecipeViewSets(viewsets.ModelViewSet):
 
 
 # CRUD mixin implemented
-class TagViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+class TagViewSet(
+    mixins.DestroyModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.ListModelMixin,
+    viewsets.GenericViewSet
+):
     """Manage tags in the database"""
     serializer_class = serializers.TagSerializer
     queryset = Tag.objects.all()
     authentication_classes = [TokenAuthentication]
-    permissions_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         """Filter queryset to authenticated user"""
