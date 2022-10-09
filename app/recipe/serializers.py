@@ -24,21 +24,21 @@ class RecipeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Recipe
-        fields = ['id', 'title', 'time_minutes', 'price', 'link']
+        fields = ['id', 'title', 'time_minutes', 'price', 'link', 'tags']
         read_only_fields = ['id']
-    
-    def create_(self, validated_data):
+
+    def create(self, validated_data):
         """Create a recipe"""
         tags = validated_data.pop('tags', [])
         recipe = Recipe.objects.create(**validated_data)
-        auth_user = self.context['requesst'].user
+        auth_user = self.context['request'].user
         for tag in tags:
             tag_obj, created = Tag.objects.get_or_create(
                 user=auth_user,
                 **tag,
             )
             recipe.tags.add(tag_obj)
-        
+
         return recipe
 
 

@@ -2,7 +2,6 @@
 Tests for recipe APIs
 """
 from decimal import Decimal
-from genericpath import exists
 
 from django.contrib.auth import get_user_model
 from django.test import TestCase
@@ -215,7 +214,7 @@ class PrivateRecipeAPITests(TestCase):
             'title': 'Thai with curry',
             'time_minutes': 30,
             'price': Decimal('34.54'),
-            'tags': [{'name': 'thai'},{'name': 'dinner'}]
+            'tags': [{'name': 'thai'}, {'name': 'dinner'}]
         }
         res = self.client.post(RECIPES_URL, payload, format='json')
 
@@ -230,7 +229,7 @@ class PrivateRecipeAPITests(TestCase):
                 user=self.user,
             ).exists()
             self.assertTrue(exists)
-    
+
     def test_create_recipe_with_existing_tags(self):
         """Test creating a recipe with existing tag"""
         tag_indian = Tag.objects.create(user=self.user, name='Indian')
@@ -238,7 +237,7 @@ class PrivateRecipeAPITests(TestCase):
             'title': 'Pongal',
             'time_minutes': 60,
             'price': Decimal('4.50'),
-            'tags': [{'name': 'Indian'},{'name': 'Breakfast'}]
+            'tags': [{'name': 'Indian'}, {'name': 'Breakfast'}]
         }
         res = self.client.post(RECIPES_URL, payload, format='json')
 
@@ -248,7 +247,7 @@ class PrivateRecipeAPITests(TestCase):
         recipe = recipes[0]
         self.assertEqual(recipe.tags.count(), 2)
         self.assertIn(tag_indian, recipe.tags.all())
-        for tag in payload['tag']:
+        for tag in payload['tags']:
             exists = recipe.tags.filter(
                 name=tag['name'],
                 user=self.user,

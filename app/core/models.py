@@ -81,7 +81,7 @@ class Tag(models.Model):
     def __str__(self):
         return self.name
 
-    
+
 # class Project(models.Model):
 #     """Projects"""
 #     company = models.CharField(max_length=255)
@@ -155,5 +155,3 @@ class Tag(models.Model):
 
 #     def __str__(self):
 #         return self.status
-
-
