@@ -38,7 +38,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=12)
     gender = models.CharField(max_length=1)
     birthday = models.CharField(max_length=25)
-    # investments=#pendiente
+    # referrals = models.ManyToManyField('Referral')
+    # investments = models.ManyToManyField('Project')
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -79,3 +80,80 @@ class Tag(models.Model):
 
     def __str__(self):
         return self.name
+
+    
+# class Project(models.Model):
+#     """Projects"""
+#     company = models.CharField(max_length=255)
+#     name = models.CharField(max_length=255)
+#     # prices = models.ManyToManyField('Price')
+#     description = models.CharField(max_length=255)
+#     # details = models.ManyToManyField('Detail')
+#     # aditional_info = models.ManyToManyField('AditionalInfo')
+
+#     def ___str__(self):
+#         return self.company
+
+
+# class Price(models.Model):
+#     """Prices"""
+#     project = models.ForeignKey(
+#         Project,
+#         on_delete=models.CASCADE,
+#     )
+#     name = models.CharField(max_length=255)
+#     amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+#     def __str__(self):
+#         return self.name
+
+
+# class Detail(models.Model):
+#     """Detail"""
+#     project = models.ForeignKey(
+#         Project,
+#         on_delete=models.CASCADE,
+#     )
+#     name = models.CharField(max_length=255)
+#     description = models.TextField(blank=True)
+
+#     def __str__(self):
+#         return self.name
+
+
+# class Image(models.Model):
+#     """Image"""
+#     name = models.CharField(max_length=255)
+#     url = models.ImageField(blank=True)
+
+
+# class AditionalInfo(models.Model):
+#     """Aditional Info"""
+
+#     project = models.ForeignKey(
+#         Project,
+#         on_delete=models.CASCADE,
+#     )
+#     name = models.CharField(max_length=255)
+#     description = models.TextField(blank=True)
+
+#     def __str__(self):
+#         return self.name
+
+
+# class Referral(models.Model):
+#     """Referral"""
+#     user = models.ForeignKey(
+#         User,
+#         on_delete=models.CASCADE,
+#     )
+#     status = models.CharField(max_length=10)
+#     project = models.ForeignKey(
+#         Project,
+#         on_delete=models.CASCADE,
+#     )
+
+#     def __str__(self):
+#         return self.status
+
+
