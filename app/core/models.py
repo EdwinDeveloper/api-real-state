@@ -1,6 +1,7 @@
 """
     Database models
 """
+import uuid
 from django.conf import settings
 from django.db import models
 from django.contrib.auth.models import (
@@ -82,43 +83,39 @@ class Tag(models.Model):
         return self.name
 
 
-# class Project(models.Model):
-#     """Projects"""
-#     company = models.CharField(max_length=255)
-#     name = models.CharField(max_length=255)
-#     # prices = models.ManyToManyField('Price')
-#     description = models.CharField(max_length=255)
-#     # details = models.ManyToManyField('Detail')
-#     # aditional_info = models.ManyToManyField('AditionalInfo')
+class Project(models.Model):
+    """Projects"""
 
-#     def ___str__(self):
-#         return self.company
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    company = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    prices = models.ManyToManyField('Price')
+    description = models.CharField(max_length=255)
+    details = models.ManyToManyField('Detail')
+    aditionalInfos = models.ManyToManyField('AditionalInfo')
 
-
-# class Price(models.Model):
-#     """Prices"""
-#     project = models.ForeignKey(
-#         Project,
-#         on_delete=models.CASCADE,
-#     )
-#     name = models.CharField(max_length=255)
-#     amount = models.DecimalField(max_digits=10, decimal_places=2)
-
-#     def __str__(self):
-#         return self.name
+    def ___str__(self):
+        return self.company
 
 
-# class Detail(models.Model):
-#     """Detail"""
-#     project = models.ForeignKey(
-#         Project,
-#         on_delete=models.CASCADE,
-#     )
-#     name = models.CharField(max_length=255)
-#     description = models.TextField(blank=True)
+class Price(models.Model):
+    """Prices"""
 
-#     def __str__(self):
-#         return self.name
+    name = models.CharField(max_length=255)
+    amount = models.DecimalField(max_digits=10, decimal_places=2)
+
+    def __str__(self):
+        return self.name
+
+
+class Detail(models.Model):
+    """Detail"""
+
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
+
+    def __str__(self):
+        return self.name
 
 
 # class Image(models.Model):
@@ -127,18 +124,14 @@ class Tag(models.Model):
 #     url = models.ImageField(blank=True)
 
 
-# class AditionalInfo(models.Model):
-#     """Aditional Info"""
+class AditionalInfo(models.Model):
+    """Aditional Info"""
 
-#     project = models.ForeignKey(
-#         Project,
-#         on_delete=models.CASCADE,
-#     )
-#     name = models.CharField(max_length=255)
-#     description = models.TextField(blank=True)
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True)
 
-#     def __str__(self):
-#         return self.name
+    def __str__(self):
+        return self.name
 
 
 # class Referral(models.Model):
