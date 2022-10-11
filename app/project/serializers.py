@@ -6,7 +6,7 @@ from core.models import (
     Project,
     Price,
     Detail,
-    AditionalInfo,
+    Extra,
 )
 
 
@@ -15,7 +15,7 @@ class PriceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Price
-        fields = ['id', 'name', 'amount']
+        fields = ['id', 'key', 'info']
         read_only_fields = ['id']
 
 
@@ -24,16 +24,16 @@ class DetailSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Detail
-        fields = ['id', 'name', 'description']
+        fields = ['id', 'key', 'info']
         read_only_fields = ['id']
 
 
-class AditionalInfoSerializer(serializers.ModelSerializer):
-    """Aditional Info Serializer"""
+class ExtraSerializer(serializers.ModelSerializer):
+    """Extra Info Serializer"""
 
     class Meta:
-        model = AditionalInfo
-        fields = ['id', 'name', 'description']
+        model = Extra
+        fields = ['id', 'key', 'info']
         read_only_fields = ['id']
 
 
@@ -43,11 +43,11 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     prices = PriceSerializer(many=True, required=False)
     details = DetailSerializer(many=True, required=False)
-    aditionalInfos = AditionalInfoSerializer(many=True, required=False)
+    extras = ExtraSerializer(many=True, required=False)
 
     class Meta:
         model = Project
-        fields = ['id', 'company', 'name', 'description', 'prices', 'details', 'aditionalInfos']
+        fields = ['id', 'company', 'name', 'description', 'prices', 'details', 'extras']
         read_only_fields = ['id']
     
     def _get_or_create_prices(self, prices, project):
@@ -66,23 +66,23 @@ class ProjectSerializer(serializers.ModelSerializer):
             )
             project.details.add(detail_obj)
 
-    def _get_or_create_aditionalInfos(self, aditionalInfos, project):
+    def _get_or_create_extras(self, extras, project):
         """Handle getting or creating prices as needed"""
-        for info in aditionalInfos:
-            info_obj, created = AditionalInfo.objects.get_or_create(
-                **info,
+        for extra in extras:
+            extra_obj, created = Extra.objects.get_or_create(
+                **extra,
             )
-            project.aditionalInfos.add(info_obj)
+            project.extras.add(extra_obj)
     
     def create(self, validated_data):
         """Create a project"""
         prices = validated_data.pop('prices', [])
         details = validated_data.pop('details', [])
-        aditionalInfos = validated_data.pop('aditionalInfos', [])
+        extras = validated_data.pop('extras', [])
         project = Project.objects.create(**validated_data)
         self._get_or_create_prices(prices, project)
         self._get_or_create_details(details, project)
-        self._get_or_create_aditionalInfos(aditionalInfos, project)
+        self._get_or_create_extras(extras, project)
 
         return project
     
@@ -98,10 +98,10 @@ class ProjectSerializer(serializers.ModelSerializer):
             instance.details.clear()
             self._get_or_create_details(details, instance)
 
-        aditionalInfos = validated_data.pop('aditionalInfos', None)
-        if aditionalInfos is not None:
-            instance.AditionalInfos.clear()
-            self._get_or_create_aditionalInfos(aditionalInfos, instance)
+        extras = validated_data.pop('extras', None)
+        if extras is not None:
+            instance.Extras.clear()
+            self._get_or_create_extras(extras, instance)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)

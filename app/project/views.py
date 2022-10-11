@@ -10,9 +10,6 @@ from rest_framework.permissions import IsAuthenticated
 
 from core.models import (
     Project,
-    Price,
-    Detail,
-    AditionalInfo,
 )
 
 from project import serializers

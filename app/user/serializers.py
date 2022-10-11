@@ -9,14 +9,19 @@ from django.utils.translation import gettext as _
 
 from rest_framework import serializers
 
+from project.serializers import ProjectSerializer
+
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 
+    investments = ProjectSerializer(many=True, required=False)
+
     class Meta:
         model = get_user_model()
-        fields = ['email', 'password', 'name']
+        fields = ['country_code', 'phone_number', 'gender', 'birthday', 'email', 'password', 'name', 'last_name', 'is_active', 'is_staff', 'investments']
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
+        read_only_fiels = ['id']
 
     def create(self, validated_data):
         """Create and return a user with encrypted password"""

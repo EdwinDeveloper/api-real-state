@@ -40,7 +40,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=1)
     birthday = models.CharField(max_length=25)
     # referrals = models.ManyToManyField('Referral')
-    # investments = models.ManyToManyField('Project')
+    investments = models.ManyToManyField('Project')
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -92,7 +92,7 @@ class Project(models.Model):
     prices = models.ManyToManyField('Price')
     description = models.CharField(max_length=255)
     details = models.ManyToManyField('Detail')
-    aditionalInfos = models.ManyToManyField('AditionalInfo')
+    extras = models.ManyToManyField('Extra')
 
     def ___str__(self):
         return self.company
@@ -101,8 +101,9 @@ class Project(models.Model):
 class Price(models.Model):
     """Prices"""
 
-    name = models.CharField(max_length=255)
-    amount = models.DecimalField(max_digits=10, decimal_places=2)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    key = models.CharField(max_length=255)
+    info = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
@@ -111,8 +112,9 @@ class Price(models.Model):
 class Detail(models.Model):
     """Detail"""
 
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    key = models.CharField(max_length=255)
+    info = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
@@ -124,11 +126,12 @@ class Detail(models.Model):
 #     url = models.ImageField(blank=True)
 
 
-class AditionalInfo(models.Model):
-    """Aditional Info"""
+class Extra(models.Model):
+    """Extra"""
 
-    name = models.CharField(max_length=255)
-    description = models.TextField(blank=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    key = models.CharField(max_length=255)
+    info = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
