@@ -3,7 +3,7 @@ Views for the projects APIs
 """
 from rest_framework import (
     viewsets,
-    mixins,
+    # mixins,
 )
 from rest_framework.authentication import TokenAuthentication
 from rest_framework.permissions import IsAuthenticated
@@ -25,7 +25,7 @@ class ProjectViewSets(viewsets.ModelViewSet):
     def get_queryset(self):
         """Retrieves projects for authentication user"""
         return self.queryset.all().order_by('-id')
-    
+
     def perform_create(self, serializer):
         """Create a new Recipe"""
         serializer.save()

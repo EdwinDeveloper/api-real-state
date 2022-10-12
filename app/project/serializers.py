@@ -37,7 +37,6 @@ class ExtraSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 
-
 class ProjectSerializer(serializers.ModelSerializer):
     """Project Serializer"""
 
@@ -47,9 +46,13 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Project
-        fields = ['id', 'company', 'name', 'description', 'prices', 'details', 'extras']
+        fields = [
+            'id', 'company', 'name',
+            'description', 'prices', 'details',
+            'extras'
+        ]
         read_only_fields = ['id']
-    
+
     def _get_or_create_prices(self, prices, project):
         """Handle getting or creating prices as needed"""
         for price in prices:
@@ -57,7 +60,7 @@ class ProjectSerializer(serializers.ModelSerializer):
                 **price,
             )
             project.prices.add(price_obj)
-    
+
     def _get_or_create_details(self, details, project):
         """Handle getting or creating prices as needed"""
         for detail in details:
@@ -73,7 +76,7 @@ class ProjectSerializer(serializers.ModelSerializer):
                 **extra,
             )
             project.extras.add(extra_obj)
-    
+
     def create(self, validated_data):
         """Create a project"""
         prices = validated_data.pop('prices', [])
@@ -85,7 +88,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         self._get_or_create_extras(extras, project)
 
         return project
-    
+
     def update(self, instance, validated_data):
         """Update project"""
         prices = validated_data.pop('prices', None)

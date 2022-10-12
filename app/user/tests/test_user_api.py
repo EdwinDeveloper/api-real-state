@@ -31,6 +31,7 @@ class PublicUserApiTest(TestCase):
             'email': 'example@correo.com',
             'password': 'test123',
             'name': 'Test Name',
+            'last_name': 'test last name'
         }
         res = self.client.post(CREATE_USER_URL, payload)
 
@@ -123,6 +124,9 @@ class PrivateUserApiTests(TestCase):
             email='test@example.com',
             password='test123',
             name='edwin perez',
+            # country_code= '+52',
+            # phone_number= '322685948',
+            # gender= 'M',
         )
         self.client = APIClient()
         self.client.force_authenticate(user=self.user)
@@ -132,7 +136,10 @@ class PrivateUserApiTests(TestCase):
         res = self.client.get(ME_URL)
 
         self.assertEqual(res.status_code, status.HTTP_200_OK)
-        self.assertEqual(res.data, {
+        self.assertEqual({
+            'name': res.data['name'],
+            'email': res.data['email'],
+        }, {
             'name': self.user.name,
             'email': self.user.email,
         })

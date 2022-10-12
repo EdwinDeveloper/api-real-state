@@ -35,10 +35,10 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """User in the system"""
-    country_code = models.CharField(max_length=3)
-    phone_number = models.CharField(max_length=12)
-    gender = models.CharField(max_length=1)
-    birthday = models.CharField(max_length=25)
+    country_code = models.CharField(max_length=3, null=True)
+    phone_number = models.CharField(max_length=20, null=True)
+    gender = models.CharField(max_length=1, null=True)
+    birthday = models.CharField(max_length=25, null=True)
     # referrals = models.ManyToManyField('Referral')
     investments = models.ManyToManyField('Project')
     email = models.EmailField(max_length=255, unique=True)
@@ -66,6 +66,7 @@ class Recipe(models.Model):
     price = models.DecimalField(max_digits=5, decimal_places=2)
     link = models.CharField(max_length=255, blank=True)
     tags = models.ManyToManyField('Tag')
+    ingredients = models.ManyToManyField('Ingredient')
 
     def __str__(self):
         return self.title
@@ -73,6 +74,18 @@ class Recipe(models.Model):
 
 class Tag(models.Model):
     """Tag for filtering recipes"""
+    name = models.CharField(max_length=255)
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+    )
+
+    def __str__(self):
+        return self.name
+
+
+class Ingredient(models.Model):
+    """Ingredient"""
     name = models.CharField(max_length=255)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
