@@ -35,11 +35,12 @@ class UserManager(BaseUserManager):
 
 class User(AbstractBaseUser, PermissionsMixin):
     """User in the system"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     country_code = models.CharField(max_length=3, null=True)
     phone_number = models.CharField(max_length=20, null=True)
     gender = models.CharField(max_length=1, null=True)
     birthday = models.CharField(max_length=25, null=True)
-    # referrals = models.ManyToManyField('Referral')
+    referrals = models.ManyToManyField('Referral')
     investments = models.ManyToManyField('Project')
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
@@ -54,6 +55,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class Recipe(models.Model):
     """Recipes object"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(  # Many recipes can bellow to a simple user
         settings.AUTH_USER_MODEL,  # Reference of the user
         on_delete=models.CASCADE,
@@ -74,6 +76,7 @@ class Recipe(models.Model):
 
 class Tag(models.Model):
     """Tag for filtering recipes"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -86,6 +89,7 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     """Ingredient"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=255)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL,
@@ -102,6 +106,8 @@ class Project(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     company = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
+    model = models.CharField(max_length=255, unique=True)
+    icon = models.TextField(blank=True)
     prices = models.ManyToManyField('Price')
     description = models.CharField(max_length=255)
     details = models.ManyToManyField('Detail')
@@ -150,17 +156,16 @@ class Extra(models.Model):
         return self.name
 
 
-# class Referral(models.Model):
-#     """Referral"""
-#     user = models.ForeignKey(
-#         User,
-#         on_delete=models.CASCADE,
-#     )
-#     status = models.CharField(max_length=10)
-#     project = models.ForeignKey(
-#         Project,
-#         on_delete=models.CASCADE,
-#     )
+class Referral(models.Model):
+    """Referral"""
+    # user_referral = models.ForeignKey(
+    #     User,
+    #     on_delete=models.DO_NOTHING,
+    # )
+    user_referral = models.ManyToManyField('User')
+    project = models.ManyToManyField('Project')
+    status = models.CharField(max_length=20)
+    # project = models.ManyToManyField('Project')  Revisar
 
-#     def __str__(self):
-#         return self.status
+    def __str__(self):
+        return self.status

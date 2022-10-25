@@ -7,6 +7,7 @@ from core.models import (
     Price,
     Detail,
     Extra,
+    Referral,
 )
 
 
@@ -111,3 +112,14 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class ReferralSerializer(serializers.ModelSerializer):
+    """Referral serializer"""
+
+    project = ProjectSerializer(required=False)
+
+    class Meta:
+        model = Referral
+        fields = ['id', 'status', 'project', 'user_referral']
+        read_only_fields = ['id']

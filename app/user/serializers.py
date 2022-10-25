@@ -9,13 +9,17 @@ from django.utils.translation import gettext as _
 
 from rest_framework import serializers
 
-from project.serializers import ProjectSerializer
+from project.serializers import (
+    ProjectSerializer,
+    ReferralSerializer,
+)
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 
     investments = ProjectSerializer(many=True, required=False)
+    referrals = ReferralSerializer(many=True, required=False)
 
     class Meta:
         model = get_user_model()
@@ -23,7 +27,8 @@ class UserSerializer(serializers.ModelSerializer):
             'country_code', 'phone_number',
             'gender', 'birthday', 'email',
             'password', 'name', 'last_name',
-            'is_active', 'is_staff', 'investments'
+            'is_active', 'is_staff', 'investments',
+            'referrals'
         ]
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']
@@ -42,6 +47,13 @@ class UserSerializer(serializers.ModelSerializer):
             user.save()
 
         return user
+
+
+class UserSerializerField(serializers.Field):
+    """"""
+    def to_internal_value(self, id):
+        """"""
+        return get_user_model().objects.get(pk=id)
 
 
 class AuthTokenSerializer(serializers.Serializer):
