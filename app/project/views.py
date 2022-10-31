@@ -10,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from core.models import (
     Project,
+    Company,
 )
 
 from project import serializers
@@ -29,3 +30,12 @@ class ProjectViewSets(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Create a new Recipe"""
         serializer.save()
+
+
+class CompanyViewSets(viewsets.ModelViewSet):
+    """View for manage companies APIs"""
+
+    serializer_class = serializers.CompanySerializer
+    queryset = Company.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]

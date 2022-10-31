@@ -3,20 +3,21 @@ Views for the projects APIs
 """
 from rest_framework import serializers
 from core.models import (
+    Company,
     Project,
-    Price,
+    Image,
     Detail,
     Extra,
     Referral,
 )
 
 
-class PriceSerializer(serializers.ModelSerializer):
+class ImageSerializer(serializers.ModelSerializer):
     """Price Serializer"""
 
     class Meta:
-        model = Price
-        fields = ['id', 'key', 'info']
+        model = Image
+        fields = ['id', 'url']
         read_only_fields = ['id']
 
 
@@ -41,26 +42,37 @@ class ExtraSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     """Project Serializer"""
 
-    prices = PriceSerializer(many=True, required=False)
+    company  = serializers.SerializerMethodField('get_company_name')
+
+    images = ImageSerializer(many=True, required=False)
     details = DetailSerializer(many=True, required=False)
     extras = ExtraSerializer(many=True, required=False)
 
     class Meta:
         model = Project
         fields = [
-            'id', 'company', 'name',
-            'description', 'prices', 'details',
-            'extras'
+            'id', 'name', 'model',
+            'description', 'pre_sale_price', 'pre_sale_date',
+            'premises_delivery_date', 'rent_price_approximate',
+            'resale_price_approximate', 'images', 'details',
+            'extras', 'company_related', 'company'
         ]
         read_only_fields = ['id']
 
-    def _get_or_create_prices(self, prices, project):
+    def get_company_name(self, obj):
+        """get name company"""
+        company = Company.objects.filter(id=obj.company_related_id)
+        serialized = CompanySerializer(company, many=True)
+        serialized.data[0].pop('models', None)
+        return serialized.data[0]
+
+    def _get_or_create_images(self, images, project):
         """Handle getting or creating prices as needed"""
-        for price in prices:
-            price_obj, created = Price.objects.get_or_create(
-                **price,
+        for image in images:
+            image_obj, created = Image.objects.get_or_create(
+                **image,
             )
-            project.prices.add(price_obj)
+            project.images.add(image_obj)
 
     def _get_or_create_details(self, details, project):
         """Handle getting or creating prices as needed"""
@@ -80,11 +92,11 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """Create a project"""
-        prices = validated_data.pop('prices', [])
+        images = validated_data.pop('images', [])
         details = validated_data.pop('details', [])
         extras = validated_data.pop('extras', [])
         project = Project.objects.create(**validated_data)
-        self._get_or_create_prices(prices, project)
+        self._get_or_create_images(images, project)
         self._get_or_create_details(details, project)
         self._get_or_create_extras(extras, project)
 
@@ -92,10 +104,10 @@ class ProjectSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         """Update project"""
-        prices = validated_data.pop('prices', None)
-        if prices is not None:
-            instance.prices.clear()
-            self._get_or_create_prices(prices, instance)
+        images = validated_data.pop('images', None)
+        if images is not None:
+            instance.images.clear()
+            self._get_or_create_images(images, instance)
 
         details = validated_data.pop('details', None)
         if details is not None:
@@ -104,7 +116,7 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         extras = validated_data.pop('extras', None)
         if extras is not None:
-            instance.Extras.clear()
+            instance.extras.clear()
             self._get_or_create_extras(extras, instance)
 
         for attr, value in validated_data.items():
@@ -112,6 +124,16 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class CompanySerializer(serializers.ModelSerializer):
+    """Company Serializer"""
+
+    models = ProjectSerializer(many=True, required=False)
+
+    class Meta:
+        model = Company
+        fields = ['id', 'name', 'icon', 'models']
 
 
 class ReferralSerializer(serializers.ModelSerializer):

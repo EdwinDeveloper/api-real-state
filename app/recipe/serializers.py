@@ -17,6 +17,11 @@ class TagSerializer(serializers.ModelSerializer):
         fields = ['id', 'name']
         read_only_fields = ['id']
 
+    def create(self, validated_data):
+        """Create a tag"""
+        tag = Tag.objects.create(**validated_data)
+        return tag
+
 
 class RecipeSerializer(serializers.ModelSerializer):
     """Serializer for recipe"""

@@ -13,6 +13,7 @@ from project import views
 
 router = DefaultRouter()  # We create a default router
 router.register('projects', views.ProjectViewSets)
+router.register('companies', views.CompanyViewSets)
 
 app_name = 'project'
 

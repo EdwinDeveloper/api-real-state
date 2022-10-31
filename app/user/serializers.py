@@ -1,6 +1,7 @@
 """
 Serializers for the user API View
 """
+from xml.dom import ValidationErr
 from django.contrib.auth import (
     get_user_model,
     authenticate,
@@ -14,9 +15,16 @@ from project.serializers import (
     ReferralSerializer,
 )
 
+from core.models import (
+    Project,
+    Referral,
+)
+
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
+
+    projects = serializers.SerializerMethodField('get_All_Projects')
 
     investments = ProjectSerializer(many=True, required=False)
     referrals = ReferralSerializer(many=True, required=False)
@@ -28,10 +36,36 @@ class UserSerializer(serializers.ModelSerializer):
             'gender', 'birthday', 'email',
             'password', 'name', 'last_name',
             'is_active', 'is_staff', 'investments',
-            'referrals'
+            'referrals', 'projects'
         ]
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']
+
+    def get_All_Projects(self, validated_data):
+        """get all projects"""
+        projects = Project.objects.all()
+        serialized = ProjectSerializer(projects, many=True)
+        return serialized.data
+
+    def _get_or_add_projects(self, projects, user):
+        """Handle getting or add projects as needed"""
+        
+        for project in projects:
+            try:
+                project_obj, finded = Project.objects.get(
+                    **project
+                )
+                user.investments.set(project_obj)
+            except Project.DoesNotExist:
+                raise ValidationErr("NOT FOUND IN")
+
+    def _get_or_add_referrals(self, referrals, user):
+        """Handle getting or add referrals as needed"""
+        for referral in referrals:
+            referral_obj, finded = Referral.objects.get(
+                **referral
+            )
+            user.referrals.add(referral_obj)
 
     def create(self, validated_data):
         """Create and return a user with encrypted password"""
@@ -40,20 +74,26 @@ class UserSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         """Update and return user"""
         password = validated_data.pop('password', None)
-        user = super().update(instance, validated_data)
+
+        investments = validated_data.pop('investments', None)
+        referrals = validated_data.pop('referrals', None)
+
+        user = super(UserSerializer, self).update(instance, validated_data)
 
         if password:
             user.set_password(password)
-            user.save()
+
+        if investments is not None:
+            instance.investments.clear()
+            self._get_or_add_projects(investments, instance)
+        
+        if referrals is not None:
+            instance.referrals.clear()
+            self._get_or_add_referrals(referrals, instance)
+
+        user.save()
 
         return user
-
-
-class UserSerializerField(serializers.Field):
-    """"""
-    def to_internal_value(self, id):
-        """"""
-        return get_user_model().objects.get(pk=id)
 
 
 class AuthTokenSerializer(serializers.Serializer):

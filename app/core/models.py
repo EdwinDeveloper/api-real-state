@@ -40,8 +40,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     phone_number = models.CharField(max_length=20, null=True)
     gender = models.CharField(max_length=1, null=True)
     birthday = models.CharField(max_length=25, null=True)
+
     referrals = models.ManyToManyField('Referral')
     investments = models.ManyToManyField('Project')
+
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -100,16 +102,39 @@ class Ingredient(models.Model):
         return self.name
 
 
+class Company(models.Model):
+    """Company"""
+
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    name = models.CharField(max_length=255, null=False, unique=True)
+    icon = models.TextField(blank=True)
+    models = models.ManyToManyField('Project')
+
+    def __str__(self):
+        return self.name
+
+
 class Project(models.Model):
     """Projects"""
 
+    company_related = models.ForeignKey(
+        Company,
+        on_delete=models.CASCADE
+    )
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    company = models.CharField(max_length=255)
     name = models.CharField(max_length=255)
     model = models.CharField(max_length=255, unique=True)
     icon = models.TextField(blank=True)
-    prices = models.ManyToManyField('Price')
+
+    pre_sale_price = models.CharField(max_length=255, default='')
+    pre_sale_date = models.CharField(max_length=255, default='')
+    premises_delivery_date = models.CharField(max_length=255, default='')
+    rent_price_approximate = models.CharField(max_length=255, default='')
+    resale_price_approximate = models.CharField(max_length=255, default='')
+
     description = models.CharField(max_length=255)
+
+    images = models.ManyToManyField('Image', blank=True, null=True)
     details = models.ManyToManyField('Detail')
     extras = models.ManyToManyField('Extra')
 
@@ -117,15 +142,13 @@ class Project(models.Model):
         return self.company
 
 
-class Price(models.Model):
-    """Prices"""
+class Image(models.Model):
+    """Image"""
 
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    key = models.CharField(max_length=255)
-    info = models.CharField(max_length=255)
-
+    url = models.TextField(blank=True)
     def __str__(self):
-        return self.name
+        return self.url
 
 
 class Detail(models.Model):
@@ -137,12 +160,6 @@ class Detail(models.Model):
 
     def __str__(self):
         return self.name
-
-
-# class Image(models.Model):
-#     """Image"""
-#     name = models.CharField(max_length=255)
-#     url = models.ImageField(blank=True)
 
 
 class Extra(models.Model):
@@ -158,14 +175,9 @@ class Extra(models.Model):
 
 class Referral(models.Model):
     """Referral"""
-    # user_referral = models.ForeignKey(
-    #     User,
-    #     on_delete=models.DO_NOTHING,
-    # )
     user_referral = models.ManyToManyField('User')
     project = models.ManyToManyField('Project')
     status = models.CharField(max_length=20)
-    # project = models.ManyToManyField('Project')  Revisar
 
     def __str__(self):
         return self.status
