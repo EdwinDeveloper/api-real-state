@@ -19,6 +19,7 @@ from core.models import (
     Project,
     Referral,
 )
+import json
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -49,15 +50,18 @@ class UserSerializer(serializers.ModelSerializer):
 
     def _get_or_add_projects(self, projects, user):
         """Handle getting or add projects as needed"""
-        
+
         for project in projects:
+            print("here")
             try:
+                print("before")
                 project_obj, finded = Project.objects.get(
-                    **project
+                    model=project['model']
                 )
+                print("here : ", project_obj)
                 user.investments.set(project_obj)
             except Project.DoesNotExist:
-                raise ValidationErr("NOT FOUND IN")
+                raise ValidationErr("NOT FOUND IN THE SYSTEM")
 
     def _get_or_add_referrals(self, referrals, user):
         """Handle getting or add referrals as needed"""
@@ -94,6 +98,11 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
 
         return user
+    
+    def set_investment(self, validate_data):
+        """set an investment to a user"""
+        print(validate_data)
+        return "Hola"
 
 
 class AuthTokenSerializer(serializers.Serializer):
