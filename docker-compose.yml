@@ -10,6 +10,7 @@ services: #services fo the compose
       - "8000:8000"
     volumes:
       - ./app:/app
+      - dev-static-data:/vol/web
     command: >
       sh -c "python3 manage.py wait_for_db &&
              python3 manage.py migrate &&
@@ -35,4 +36,5 @@ services: #services fo the compose
 
 volumes:
   dev-db-data:
+  dev-static-data:
     
