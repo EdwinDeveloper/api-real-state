@@ -9,6 +9,7 @@ from django.contrib.auth import (
 from django.utils.translation import gettext as _
 
 from rest_framework import serializers
+from rest_framework.response import Response
 
 from project.serializers import (
     ProjectSerializer,
@@ -18,6 +19,7 @@ from project.serializers import (
 from core.models import (
     Project,
     Referral,
+    User,
 )
 import json
 
@@ -25,7 +27,7 @@ import json
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 
-    projects = serializers.SerializerMethodField('get_All_Projects')
+    # projects = serializers.SerializerMethodField('get_All_Projects')
 
     investments = ProjectSerializer(many=True, required=False)
     referrals = ReferralSerializer(many=True, required=False)
@@ -37,7 +39,7 @@ class UserSerializer(serializers.ModelSerializer):
             'gender', 'birthday', 'email',
             'password', 'name', 'last_name',
             'is_active', 'is_staff', 'investments',
-            'referrals', 'projects'
+            'referrals', # 'projects'
         ]
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']
@@ -54,11 +56,9 @@ class UserSerializer(serializers.ModelSerializer):
         for project in projects:
             print("here")
             try:
-                print("before")
                 project_obj, finded = Project.objects.get(
                     model=project['model']
                 )
-                print("here : ", project_obj)
                 user.investments.set(project_obj)
             except Project.DoesNotExist:
                 raise ValidationErr("NOT FOUND IN THE SYSTEM")
@@ -104,6 +104,17 @@ class UserSerializer(serializers.ModelSerializer):
         print(validate_data)
         return "Hola"
 
+
+class UserSetInvestmentSerializer(serializers.ModelSerializer):
+    """Serializer to set a new investment"""
+
+    user_id = serializers.CharField(max_length=255)
+    investment_id = serializers.CharField(max_length=255)
+
+    class Meta:
+        model = User
+        fields = ['id', 'user_id', 'investment_id']
+        read_only_fiels = ['id']
 
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for the user auth token"""
