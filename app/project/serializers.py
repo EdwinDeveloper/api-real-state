@@ -42,7 +42,7 @@ class ExtraSerializer(serializers.ModelSerializer):
 class ProjectSerializer(serializers.ModelSerializer):
     """Project Serializer"""
 
-    # company  = serializers.SerializerMethodField('get_company_name')
+    company  = serializers.SerializerMethodField('get_company_name')
 
     images = ImageSerializer(many=True, required=False)
     details = DetailSerializer(many=True, required=False)
@@ -55,7 +55,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             'description', 'pre_sale_price', 'pre_sale_date',
             'premises_delivery_date', 'rent_price_approximate',
             'resale_price_approximate', 'images', 'details',
-            'extras', 'company_related' # , 'company'
+            'extras', 'company_related' , 'company'
         ]
         read_only_fields = ['id']
 
