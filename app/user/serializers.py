@@ -34,7 +34,7 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
         fields = [
-            'country_code', 'phone_number',
+            'id', 'country_code', 'phone_number',
             'gender', 'birthday', 'email',
             'password', 'name', 'last_name',
             'is_active', 'is_staff', 'investments',

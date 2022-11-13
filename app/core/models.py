@@ -51,7 +51,6 @@ class User(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=1, null=True)
     birthday = models.CharField(max_length=25, null=True)
 
-    referrals = models.ManyToManyField('Referral')
     investments = models.ManyToManyField('Project')
 
     email = models.EmailField(max_length=255, unique=True)
@@ -213,6 +212,10 @@ class Referral(models.Model):
     )
     commission = models.CharField(max_length=255)
     status = models.CharField(max_length=20)
+    user = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING
+    )
 
     def __str__(self):
-        return self.status
+        return str(self.project.id)

@@ -11,6 +11,7 @@ from core.models import (
     Referral,
     Commission,
 )
+import uuid
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -141,10 +142,19 @@ class CompanySerializer(serializers.ModelSerializer):
 class ReferralSerializer(serializers.ModelSerializer):
     """Referral serializer"""
 
+    info_project = serializers.SerializerMethodField('get_project_info')
+
     class Meta:
         model = Referral
-        fields = '__all__'
+        fields = ['id', 'country_code', 'phone_number', 'gender', 'name',
+         'last_name', 'project', 'commission', 'status', 'user', 'info_project']
         read_only_fields = ['id']
+
+    def get_project_info(self, obj):
+        """get project info"""
+        project = Project.objects.filter(id=f"{obj}")
+        serialized = ProjectSerializer(project, many=True)
+        return  serialized.data
 
     def create(self, validated_data):
         """create a referral"""
