@@ -21,13 +21,12 @@ from core.models import (
     Referral,
     User,
 )
-import json
 
 
 class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 
-    # projects = serializers.SerializerMethodField('get_All_Projects')
+    projects = serializers.SerializerMethodField('get_All_Projects')
 
     investments = ProjectSerializer(many=True, required=False)
     referrals = ReferralSerializer(many=True, required=False)
@@ -39,7 +38,7 @@ class UserSerializer(serializers.ModelSerializer):
             'gender', 'birthday', 'email',
             'password', 'name', 'last_name',
             'is_active', 'is_staff', 'investments',
-            'referrals', # 'projects'
+            'referrals', 'projects'
         ]
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']

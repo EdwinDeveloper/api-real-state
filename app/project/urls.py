@@ -14,6 +14,8 @@ from project import views
 router = DefaultRouter()  # We create a default router
 router.register('projects', views.ProjectViewSets)
 router.register('companies', views.CompanyViewSets)
+router.register('referral', views.ReferralViewSets)
+router.register('commission', views.CommissionViewSets)
 
 app_name = 'project'
 

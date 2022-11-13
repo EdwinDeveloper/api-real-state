@@ -125,6 +125,16 @@ class Company(models.Model):
         return self.name
 
 
+class Commission(models.Model):
+    """Commission"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    description = models.CharField(max_length=255, null=False)
+    percentage = models.DecimalField(max_digits=6, decimal_places=4)
+
+    def __str__(self):
+        return self.description
+
+
 class Project(models.Model):
     """Projects"""
 
@@ -137,11 +147,16 @@ class Project(models.Model):
     model = models.CharField(max_length=255, unique=True)
     icon = models.TextField(blank=True)
 
-    pre_sale_price = models.CharField(max_length=255, default='')
+    commission = models.ForeignKey(
+        Commission,
+        on_delete=models.DO_NOTHING
+    )
+
+    pre_sale_price = models.DecimalField(max_digits=100, decimal_places=2)
     pre_sale_date = models.CharField(max_length=255, default='')
     premises_delivery_date = models.CharField(max_length=255, default='')
-    rent_price_approximate = models.CharField(max_length=255, default='')
-    resale_price_approximate = models.CharField(max_length=255, default='')
+    rent_price_approximate = models.DecimalField(max_digits=100, decimal_places=2)
+    resale_price_approximate = models.DecimalField(max_digits=100, decimal_places=2)
 
     description = models.CharField(max_length=255)
 
@@ -186,8 +201,17 @@ class Extra(models.Model):
 
 class Referral(models.Model):
     """Referral"""
-    user_referral = models.ManyToManyField('User')
-    project = models.ManyToManyField('Project')
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    country_code = models.CharField(max_length=3)
+    phone_number = models.CharField(max_length=20)
+    gender = models.CharField(max_length=1)
+    name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.DO_NOTHING,
+    )
+    commission = models.CharField(max_length=255)
     status = models.CharField(max_length=20)
 
     def __str__(self):

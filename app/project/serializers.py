@@ -9,6 +9,7 @@ from core.models import (
     Detail,
     Extra,
     Referral,
+    Commission,
 )
 
 
@@ -55,7 +56,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             'description', 'pre_sale_price', 'pre_sale_date',
             'premises_delivery_date', 'rent_price_approximate',
             'resale_price_approximate', 'images', 'details',
-            'extras', 'company_related' , 'company'
+            'extras', 'company_related' , 'company', 'commission',
         ]
         read_only_fields = ['id']
 
@@ -72,6 +73,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             image_obj, created = Image.objects.get_or_create(
                 **image,
             )
+            print("a ver pues : ", image_obj)
             project.images.add(image_obj)
 
     def _get_or_create_details(self, details, project):
@@ -139,9 +141,23 @@ class CompanySerializer(serializers.ModelSerializer):
 class ReferralSerializer(serializers.ModelSerializer):
     """Referral serializer"""
 
-    project = ProjectSerializer(required=False)
-
     class Meta:
         model = Referral
-        fields = ['id', 'status', 'project', 'user_referral']
+        fields = '__all__'
+        read_only_fields = ['id']
+
+    def create(self, validated_data):
+        """create a referral"""
+        project_commission = validated_data['project'].pre_sale_price * Commission.objects.get(id=validated_data['commission']).percentage
+        validated_data['commission'] = project_commission
+        project = Referral.objects.create(**validated_data)
+        return project
+
+
+class CommissionSerializer(serializers.ModelSerializer):
+    """Commission serializer"""
+
+    class Meta:
+        model = Commission
+        fields = '__all__'
         read_only_fields = ['id']

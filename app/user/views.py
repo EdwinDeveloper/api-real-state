@@ -15,12 +15,10 @@ from rest_framework.settings import api_settings
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from xml.dom import ValidationErr
 from user.serializers import (
     UserSerializer,
     UserSetInvestmentSerializer,
     AuthTokenSerializer,
-    ProjectSerializer,
 )
 from core.models import (
     User,
@@ -67,8 +65,6 @@ class UserViewSets(viewsets.ModelViewSet):
                 user = User.objects.get(id=objectSerializer.data['user_id'])
                 user.investments.add(project)
                 user.save()
-
-                das = ProjectSerializer(project)
                 u = UserSerializer(user)
 
                 return Response(u.data, status.HTTP_200_OK)
@@ -76,7 +72,6 @@ class UserViewSets(viewsets.ModelViewSet):
             return Response(objectSerializer.errors, status. HTTP_400_BAD_REQUEST)
         except:
             return Response(objectSerializer.errors, status. HTTP_400_BAD_REQUEST)
-        
 
 
 class CreateTokenView(ObtainAuthToken):
