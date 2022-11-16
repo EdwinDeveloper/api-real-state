@@ -27,9 +27,8 @@ class UserSerializer(serializers.ModelSerializer):
     """Serializer for the user object"""
 
     projects = serializers.SerializerMethodField('get_All_Projects')
-
-    investments = ProjectSerializer(many=True, required=False)
     referrals = ReferralSerializer(many=True, required=False)
+    investments = ProjectSerializer(many=True, required=False)
 
     class Meta:
         model = get_user_model()
@@ -43,6 +42,13 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']
 
+    # def get_All_Referrals(self, *validated_data):
+    #     """get all referrals"""
+    #     print(validated_data)
+    #     referrals = Referral.objects.filter(user='d3c416e0-71af-4119-94c5-7756840bdf4e')
+    #     serialized = ReferralSerializer(referrals, many=True)
+    #     return serialized.data
+
     def get_All_Projects(self, validated_data):
         """get all projects"""
         projects = Project.objects.all()
@@ -53,7 +59,6 @@ class UserSerializer(serializers.ModelSerializer):
         """Handle getting or add projects as needed"""
 
         for project in projects:
-            print("here")
             try:
                 project_obj, finded = Project.objects.get(
                     model=project['model']

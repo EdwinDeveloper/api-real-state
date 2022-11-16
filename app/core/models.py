@@ -51,6 +51,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     gender = models.CharField(max_length=1, null=True)
     birthday = models.CharField(max_length=25, null=True)
 
+    referrals = models.ManyToManyField('Referral')
     investments = models.ManyToManyField('Project')
 
     email = models.EmailField(max_length=255, unique=True)
@@ -202,7 +203,7 @@ class Referral(models.Model):
     """Referral"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     country_code = models.CharField(max_length=3)
-    phone_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=20, unique=True)
     gender = models.CharField(max_length=1)
     name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
@@ -212,10 +213,7 @@ class Referral(models.Model):
     )
     commission = models.CharField(max_length=255)
     status = models.CharField(max_length=20)
-    user = models.ForeignKey(
-        User,
-        on_delete=models.DO_NOTHING
-    )
+    user_id = models.CharField(max_length=255, default='')
 
     def __str__(self):
         return str(self.project.id)
