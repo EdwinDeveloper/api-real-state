@@ -15,6 +15,7 @@ from project.serializers import (
     ProjectSerializer,
     ReferralSerializer,
 )
+from collections import OrderedDict
 
 from core.models import (
     Project,
@@ -42,12 +43,16 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']
 
-    # def get_All_Referrals(self, *validated_data):
-    #     """get all referrals"""
-    #     print(validated_data)
-    #     referrals = Referral.objects.filter(user='d3c416e0-71af-4119-94c5-7756840bdf4e')
-    #     serialized = ReferralSerializer(referrals, many=True)
-    #     return serialized.data
+    def to_representation(self, instance):
+        data = super(serializers.ModelSerializer, self).to_representation(instance)
+        if self.context['request'].method == 'POST':
+            result = OrderedDict()
+            result['data'] = data
+            result['message'] = ['User Created']
+            result['status'] = 'success'
+            return result
+        
+        return data
 
     def get_All_Projects(self, validated_data):
         """get all projects"""
