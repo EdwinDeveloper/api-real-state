@@ -10,7 +10,7 @@ WORKDIR /app
 EXPOSE 8000
 
 ARG DEV=false
-RUN python -m venv /py && \
+RUN python3 -m venv /py && \
     #Create a new virtual environment that our system will use
     /py/bin/pip install --upgrade pip && \
     #We upgrade the packages of pip dependencies

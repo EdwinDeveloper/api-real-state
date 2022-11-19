@@ -10,6 +10,7 @@ from django.utils.translation import gettext as _
 
 from rest_framework import serializers
 from rest_framework.response import Response
+import requests
 
 from project.serializers import (
     ProjectSerializer,
@@ -30,6 +31,7 @@ class UserSerializer(serializers.ModelSerializer):
     projects = serializers.SerializerMethodField('get_All_Projects')
     referrals = ReferralSerializer(many=True, required=False)
     investments = ProjectSerializer(many=True, required=False)
+    videos = serializers.SerializerMethodField('get_videos')
 
     class Meta:
         model = get_user_model()
@@ -38,10 +40,15 @@ class UserSerializer(serializers.ModelSerializer):
             'gender', 'birthday', 'email',
             'password', 'name', 'last_name',
             'is_active', 'is_staff', 'investments',
-            'referrals', 'projects'
+            'referrals', 'projects', 'videos'
         ]
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']
+
+    def get_videos(self, validated_data):
+        """get all videos"""
+        response = requests.get("https://www.googleapis.com/youtube/v3/search?key=AIzaSyBL848RUWQcfJkLmTL2cn4VkWcmSCxiOU8&channelId=UCCf4BrsWz7BaegKR6q29tyQ&part=snippet,id&order=date&maxResults=6")
+        return response.json()
 
     def to_representation(self, instance):
         data = super(serializers.ModelSerializer, self).to_representation(instance)
