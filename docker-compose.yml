@@ -20,6 +20,7 @@ services: #services fo the compose
       - DB_NAME=devdb
       - DB_USER=devuser
       - DB_PASS=changeme
+      - DEV=true
     depends_on:
       - db
 
