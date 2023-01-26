@@ -15,6 +15,8 @@ import requests
 from project.serializers import (
     ProjectSerializer,
     ReferralSerializer,
+    CommissionSerializer,
+    CompanySerializer,
 )
 from collections import OrderedDict
 
@@ -22,6 +24,8 @@ from core.models import (
     Project,
     Referral,
     User,
+    Commission,
+    Company,
 )
 
 
@@ -32,6 +36,8 @@ class UserSerializer(serializers.ModelSerializer):
     referrals = ReferralSerializer(many=True, required=False)
     investments = ProjectSerializer(many=True, required=False)
     videos = serializers.SerializerMethodField('get_videos')
+    commissions = serializers.SerializerMethodField('get_all_commissions')
+    companies = serializers.SerializerMethodField('get_all_companies')
 
     class Meta:
         model = get_user_model()
@@ -40,7 +46,8 @@ class UserSerializer(serializers.ModelSerializer):
             'gender', 'birthday', 'email',
             'password', 'name', 'last_name',
             'is_active', 'is_staff', 'investments',
-            'referrals', 'projects', 'videos'
+            'referrals', 'projects', 'videos', 'commissions',
+            'companies',
         ]
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']
@@ -65,6 +72,18 @@ class UserSerializer(serializers.ModelSerializer):
         """get all projects"""
         projects = Project.objects.all()
         serialized = ProjectSerializer(projects, many=True)
+        return serialized.data
+
+    def get_all_commissions(self, validated_data):
+        """get all commissions"""
+        commissions = Commission.objects.all()
+        serialized = CommissionSerializer(commissions, many=True)
+        return serialized.data
+
+    def get_all_companies(self, validate_data):
+        """get all companies"""
+        companies = Company.objects.all()
+        serialized = CompanySerializer(companies, many=True)
         return serialized.data
 
     def _get_or_add_projects(self, projects, user):
