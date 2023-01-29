@@ -14,9 +14,11 @@ import requests
 
 from project.serializers import (
     ProjectSerializer,
+    ProjectManagementSerializer,
     ReferralSerializer,
     CommissionSerializer,
     CompanySerializer,
+    ReferralManagementSerializer,
 )
 from collections import OrderedDict
 
@@ -38,6 +40,7 @@ class UserSerializer(serializers.ModelSerializer):
     videos = serializers.SerializerMethodField('get_videos')
     commissions = serializers.SerializerMethodField('get_all_commissions')
     companies = serializers.SerializerMethodField('get_all_companies')
+    users = serializers.SerializerMethodField('get_all_users_not_staff')
 
     class Meta:
         model = get_user_model()
@@ -47,7 +50,7 @@ class UserSerializer(serializers.ModelSerializer):
             'password', 'name', 'last_name',
             'is_active', 'is_staff', 'investments',
             'referrals', 'projects', 'videos', 'commissions',
-            'companies',
+            'companies', 'users'
         ]
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']
@@ -68,6 +71,14 @@ class UserSerializer(serializers.ModelSerializer):
         
         return data
 
+    def get_all_users_not_staff(self, validated_data):
+        """get all users not staff"""
+        userIsStaff = User.objects.filter(email=validated_data, is_staff=True).exists()
+        if userIsStaff:
+            users =  User.objects.filter(is_staff=False)
+            serialized = UserManagementSerializer(users, many=True)
+            return serialized.data
+
     def get_All_Projects(self, validated_data):
         """get all projects"""
         projects = Project.objects.all()
@@ -76,15 +87,19 @@ class UserSerializer(serializers.ModelSerializer):
 
     def get_all_commissions(self, validated_data):
         """get all commissions"""
-        commissions = Commission.objects.all()
-        serialized = CommissionSerializer(commissions, many=True)
-        return serialized.data
+        userIsStaff = User.objects.filter(email=validated_data, is_staff=True).exists()
+        if userIsStaff:    
+            commissions = Commission.objects.all()
+            serialized = CommissionSerializer(commissions, many=True)
+            return serialized.data
 
     def get_all_companies(self, validate_data):
         """get all companies"""
-        companies = Company.objects.all()
-        serialized = CompanySerializer(companies, many=True)
-        return serialized.data
+        userIsStaff = User.objects.filter(email=validate_data, is_staff=True).exists()
+        if userIsStaff:
+            companies = Company.objects.all()
+            serialized = CompanySerializer(companies, many=True)
+            return serialized.data
 
     def _get_or_add_projects(self, projects, user):
         """Handle getting or add projects as needed"""
@@ -150,6 +165,17 @@ class UserSetInvestmentSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'user_id', 'investment_id']
         read_only_fiels = ['id']
+
+class UserManagementSerializer(serializers.ModelSerializer):
+    """Serializer to manage users from the platform"""
+
+    investments = ProjectManagementSerializer(many=True, required=False)
+    referrals = ReferralManagementSerializer(many=True, required=True)
+
+    class Meta:
+        model = User
+        fields = ['id', 'name', 'last_name', 'email', 'investments', 'referrals']
+        read_only_fields = ['id']
 
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for the user auth token"""

@@ -55,6 +55,14 @@ class ProjectReferralSerializer(serializers.ModelSerializer):
         read_only_fields = ['id']
 
 
+class ProjectManagementSerializer(serializers.ModelSerializer):
+    """Get all the user investment"""
+
+    class Meta:
+        model = Project
+        fields = ['id']
+
+
 class ProjectSerializer(serializers.ModelSerializer):
     """Project Serializer"""
 
@@ -151,6 +159,25 @@ class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = ['id', 'name', 'icon', 'models']
+
+
+class ReferralManagementSerializer(serializers.ModelSerializer):
+    """Get all referrals from one single user"""
+
+    referrals = serializers.SerializerMethodField('get_referrals')
+
+    class Meta:
+        model = Referral
+        fields = ('id', 'phone_number', 'gender', 'name', 'last_name',
+            'project', 'commission', 'status', 'referrals')
+        read_only_fields = ['id']
+
+    def get_referrals(self, obj):
+        """Get referrals info from one users"""
+        userReferrals = Referral.objects.filter(user_id=obj)
+        serialized = ReferralSerializer(userReferrals, many=True)
+        return serialized.data
+
 
 
 class ReferralSerializer(serializers.ModelSerializer):
