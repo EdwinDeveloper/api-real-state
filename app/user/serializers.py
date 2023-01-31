@@ -174,7 +174,7 @@ class UserManagementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'name', 'last_name', 'email', 'investments', 'referrals']
+        fields = ['id', 'name', 'last_name', 'country_code', 'phone_number', 'email', 'investments', 'referrals']
         read_only_fields = ['id']
 
 class AuthTokenSerializer(serializers.Serializer):
