@@ -65,9 +65,8 @@ class UserViewSets(viewsets.ModelViewSet):
                 user = User.objects.get(id=objectSerializer.data['user_id'])
                 user.investments.add(project)
                 user.save()
-                u = UserSerializer(user)
 
-                return Response(u.data, status.HTTP_200_OK)
+                return Response({ 'message': 'Investment created' }, status.HTTP_200_OK)
             
             return Response(objectSerializer.errors, status. HTTP_400_BAD_REQUEST)
         except:
