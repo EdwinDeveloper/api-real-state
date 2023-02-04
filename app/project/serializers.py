@@ -168,7 +168,7 @@ class ReferralManagementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Referral
-        fields = ('id', 'phone_number', 'gender', 'name', 'last_name',
+        fields = ('id', 'phone_number', 'country_code', 'gender', 'name', 'last_name',
             'project', 'commission', 'status', 'referrals')
         read_only_fields = ['id']
 
