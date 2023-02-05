@@ -199,6 +199,12 @@ class ReferralSerializer(serializers.ModelSerializer):
             result['message'] = ['Referral Created']
             result['status'] = 'success'
             return result
+        if self.context['request'].method == 'PATCH':
+            result = OrderedDict()
+            result['data'] = data
+            result['message'] = ['Referral Updated']
+            result['status'] = 'success'
+            return result
         
         return data
 

@@ -5,6 +5,7 @@ ENV PYTHONUNBUFFERED 1
 
 COPY ./requirements.txt /tmp/requirements.txt
 COPY ./requirements.dev.txt /tmp/requirements.dev.txt
+COPY ./scripts /scripts
 COPY ./app /app
 WORKDIR /app
 EXPOSE 8000
@@ -17,8 +18,8 @@ RUN python3 -m venv /py && \
     apk add --update --no-cache postgresql-client jpeg-dev && \
     #We install the postgresql client in our container and the jpeg-dev library
     apk add --update --no-cache --virtual .tmp-build-deps \
-    #We set a group of packages for install
-        build-base postgresql-dev musl-dev zlib zlib-dev && \
+    #We set a group of packages for install  -- linux-headers is a requirement for AWS server instalation
+        build-base postgresql-dev musl-dev zlib zlib-dev linux-headers && \
         #Install the dependencies we list
     /py/bin/pip install -r /tmp/requirements.txt && \ 
     #Install dependencies from requirement file
@@ -40,9 +41,13 @@ RUN python3 -m venv /py && \
     # we create the static volume
     chown -R django-user:django-user /vol && \
     # we change the owner with the user django-user in vol
-    chmod -R 755 /vol
+    chmod -R 755 /vol && \
+    # make sure our scripts is executable in the directory
+    chmod -R +x /scripts
     # we change the mode of the permissions of the directory
 
-ENV PATH="/py/bin:$PATH"
+ENV PATH="/scripts:/py/bin:$PATH"
 
 USER django-user
+# the name of the script that run our application
+CMD ["run.sh"]
