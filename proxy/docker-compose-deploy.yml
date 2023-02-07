@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  # App service call app
+  app:
+    # Build context of our current location
+    build:
+      context: .
+    # If the app crash, we restart the service
+    restart: always
+    # The volume we create
+    volumes:
+      - static-data:/vol/web
+    # Configuration of our environment service
+    environment:
+      - DB_HOST=db
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
+      - SECRET_KEY=${DJANGO_SECRET_KEY}
+      - ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+    # Depends on the db service
+    depends_on:
+      - db
+  db:
+    image: postgres:13-alpine
+    restart: always
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+
+  proxy:
+    build:
+      context: ./proxy
+    restart: always
+    depends_on:
+      - app
+    ports:
+      - 80:80000
+    volumes:
+      - static-data:/vol/static
+  
+  volumes:
+    postgres-data:
+    static-data:
