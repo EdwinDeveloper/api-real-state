@@ -40,7 +40,7 @@ services:
       - app
     ports:
       # - 8000:8000
-      - 80:8000 server
+      - 80:8000
     volumes:
       - static-data:/vol/static
   
