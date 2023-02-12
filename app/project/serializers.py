@@ -161,6 +161,34 @@ class CompanySerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'icon', 'models']
 
 
+class CompanySerializerAdmin(serializers.ModelSerializer):
+    """Company Serializer"""
+
+    models = ProjectSerializer(many=True, required=False)
+
+    class Meta:
+        model = Company
+        fields = ['id', 'name', 'icon', 'models']
+    
+    
+    def to_representation(self, instance):
+        data = super(serializers.ModelSerializer, self).to_representation(instance)
+        if self.context['request'].method == 'POST':
+            result = OrderedDict()
+            result['data'] = data
+            result['message'] = ['Company Created']
+            result['status'] = 'success'
+            return result
+        if self.context['request'].method == 'PATCH':
+            result = OrderedDict()
+            result['data'] = data
+            result['message'] = ['Company Updated']
+            result['status'] = 'success'
+            return result
+        
+        return data
+
+
 class ReferralManagementSerializer(serializers.ModelSerializer):
     """Get all referrals from one single user"""
 
@@ -232,3 +260,29 @@ class CommissionSerializer(serializers.ModelSerializer):
         model = Commission
         fields = '__all__'
         read_only_fields = ['id']
+
+
+class CommissionSerializerAdmin(serializers.ModelSerializer):
+    """Commission serializer"""
+
+    class Meta:
+        model = Commission
+        fields = '__all__'
+        read_only_fields = ['id']
+
+    def to_representation(self, instance):
+        data = super(serializers.ModelSerializer, self).to_representation(instance)
+        if self.context['request'].method == 'POST':
+            result = OrderedDict()
+            result['data'] = data
+            result['message'] = ['Commission Created']
+            result['status'] = 'success'
+            return result
+        if self.context['request'].method == 'PATCH':
+            result = OrderedDict()
+            result['data'] = data
+            result['message'] = ['Commission Updated']
+            result['status'] = 'success'
+            return result
+        
+        return data

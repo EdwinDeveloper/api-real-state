@@ -55,7 +55,7 @@ class ReferralViewSets(viewsets.ModelViewSet):
 
 class CommissionViewSets(viewsets.ModelViewSet):
     """View for manage commissions APIs"""
-    serializer_class = serializers.CommissionSerializer
+    serializer_class = serializers.CommissionSerializerAdmin
     queryset = Commission.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
@@ -80,7 +80,7 @@ class ProjectViewSets(viewsets.ModelViewSet):
 class CompanyViewSets(viewsets.ModelViewSet):
     """View for manage companies APIs"""
 
-    serializer_class = serializers.CompanySerializer
+    serializer_class = serializers.CompanySerializerAdmin
     queryset = Company.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
