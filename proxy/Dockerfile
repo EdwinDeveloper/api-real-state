@@ -22,7 +22,7 @@ USER root
 # We create a new directory
 RUN mkdir -p /vol/static && \
     # We give read permitions from the static forder
-    chmod 755 /vol/static/ && \
+    chmod 755 /vol/static && \
     # We create an empty file named "default.conf" in /etc/nginx/conf.d/ location
     touch /etc/nginx/conf.d/default.conf && \
     # We're making nginx the ouwner of the default.conf file

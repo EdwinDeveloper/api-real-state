@@ -21,7 +21,7 @@ services: #services fo the compose
       - DB_USER=devuser
       - DB_PASS=changeme
       - DEV=true
-      - DEBUG=0
+      - DEBUG=1
     depends_on:
       - db
 

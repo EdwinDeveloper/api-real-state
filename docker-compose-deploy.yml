@@ -22,6 +22,7 @@ services:
     # Depends on the db service
     depends_on:
       - db
+
   db:
     image: postgres:13-alpine
     restart: always
@@ -41,7 +42,7 @@ services:
     ports:
       # - 8000:8000
       - 5432:5432
-      - 8000:8000
+      - 80:8000
     volumes:
       - static-data:/vol/static
   
