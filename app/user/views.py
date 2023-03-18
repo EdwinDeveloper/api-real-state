@@ -52,7 +52,6 @@ class UserViewSets(viewsets.ModelViewSet):
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-
     @action(methods=['POST'], detail=True, url_path='set-investment')
     def set_investment(self, request, pk=None):
         """set project to a User"""

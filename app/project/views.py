@@ -23,6 +23,7 @@ from core.models import (
 )
 
 from project import serializers
+from collections import OrderedDict
 
 
 class ReferralViewSets(viewsets.ModelViewSet):
@@ -75,6 +76,26 @@ class ProjectViewSets(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         """Create a new Recipe"""
         serializer.save()
+
+    def list(self, request, *args, **kwargs):
+        if request.method == 'GET':
+            res = super(ProjectViewSets, self).list(request, *args, **kwargs)
+            res.data = {"status": "success", "message": "all projects", "data": res.data}
+            return res
+
+
+class ProjectAdminViewSets(viewsets.ModelViewSet):
+    """View for manage admin projects APIs"""
+    serializer_class = serializers.ProjectAdminSerializer
+    queryset = Project.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+    def list(self, request, *args, **kwargs):
+        if request.method == 'GET':
+            res = super(ProjectAdminViewSets, self).list(request, *args, **kwargs)
+            res.data = {"status": "success", "message": "all projects", "data": res.data}
+            return res
 
 
 class CompanyViewSets(viewsets.ModelViewSet):

@@ -96,7 +96,6 @@ class ProjectSerializer(serializers.ModelSerializer):
             image_obj, created = Image.objects.get_or_create(
                 **image,
             )
-            print("a ver pues : ", image_obj)
             project.images.add(image_obj)
 
     def _get_or_create_details(self, details, project):
@@ -149,6 +148,14 @@ class ProjectSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+    
+
+class ProjectAdminSerializer(serializers.ModelSerializer):
+    """Get all projects list"""
+
+    class Meta:
+        model = Project
+        fields = ['id']
 
 
 class CompanySerializer(serializers.ModelSerializer):

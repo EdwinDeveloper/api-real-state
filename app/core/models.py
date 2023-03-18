@@ -217,3 +217,15 @@ class Referral(models.Model):
 
     def __str__(self):
         return str(self.project.id)
+
+
+# class Investment(models.Model):
+#     """Investments o users"""
+#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+#     commission = models.CharField(max_length=255)
+#     status = models.CharField(max_length=20)
+#     user_id = models.CharField(max_length=255, default='')
+#     project = models.ForeignKey(
+#         Project,
+#         on_delete=models.DO_NOTHING,
+#     )
