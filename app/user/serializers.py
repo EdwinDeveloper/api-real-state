@@ -11,14 +11,16 @@ from django.utils.translation import gettext as _
 from rest_framework import serializers
 from rest_framework.response import Response
 import requests
+from django.http import HttpResponse
 
 from project.serializers import (
     ProjectSerializer,
-    ProjectManagementSerializer,
     ReferralSerializer,
     CommissionSerializer,
     CompanySerializer,
     ReferralManagementSerializer,
+    InvestmentSerializer,
+    InvestmentManagementSerializer
 )
 from collections import OrderedDict
 
@@ -28,6 +30,7 @@ from core.models import (
     User,
     Commission,
     Company,
+    Investment,
 )
 
 
@@ -36,7 +39,8 @@ class UserSerializer(serializers.ModelSerializer):
 
     projects = serializers.SerializerMethodField('get_All_Projects')
     referrals = ReferralSerializer(many=True, required=False)
-    investments = ProjectSerializer(many=True, required=False)
+    # investments = ProjectSerializer(many=True, required=False)
+    investments = serializers.SerializerMethodField()
     videos = serializers.SerializerMethodField('get_videos')
     commissions = serializers.SerializerMethodField('get_all_commissions')
     companies = serializers.SerializerMethodField('get_all_companies')
@@ -55,9 +59,30 @@ class UserSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']
 
+    def get_investments(self, validate_data):
+        """get all user invertions"""
+        user = User.objects.get(email=validate_data)
+        investments = Investment.objects.filter(user_id=user.id)
+        serializer = InvestmentSerializer(investments, many=True)
+        return serializer.data
+
     def get_videos(self, validated_data):
         """get all videos"""
-        response = requests.get("https://www.googleapis.com/youtube/v3/search?key=AIzaSyBL848RUWQcfJkLmTL2cn4VkWcmSCxiOU8&channelId=UCCf4BrsWz7BaegKR6q29tyQ&part=snippet,id&order=date&maxResults=6")
+        try:
+            response = requests.get("https://www.googleapis.com/youtube/v3/search?key=AIzaSyBL848RUWQcfJkLmTL2cn4VkWcmSCxiOU8&channelId=UCCf4BrsWz7BaegKR6q29tyQ&part=snippet,id&order=date&maxResults=6")
+        except Exception as e:
+            return {
+                "kind": "youtube#searchListResponse",
+                "etag": "",
+                "nextPageToken": "",
+                "regionCode": "MX",
+                "pageInfo": {
+                    "totalResults": 0,
+                    "resultsPerPage": 0
+                },
+                "items": []
+            }
+
         return response.json()
 
     def to_representation(self, instance):
@@ -169,13 +194,19 @@ class UserSetInvestmentSerializer(serializers.ModelSerializer):
 class UserManagementSerializer(serializers.ModelSerializer):
     """Serializer to manage users from the platform"""
 
-    investments = ProjectManagementSerializer(many=True, required=False)
+    investments = serializers.SerializerMethodField()
     referrals = ReferralManagementSerializer(many=True, required=True)
 
     class Meta:
         model = User
         fields = ['id', 'name', 'last_name', 'country_code', 'phone_number', 'email', 'investments', 'referrals']
-        read_only_fields = ['id']
+
+    def get_investments(self, validate_data):
+        """get all user invertions"""
+        user = User.objects.get(email=validate_data)
+        investments = Investment.objects.filter(user_id=user.id)
+        serializer = InvestmentSerializer(investments, many=True)
+        return serializer.data
 
 class AuthTokenSerializer(serializers.Serializer):
     """Serializer for the user auth token"""

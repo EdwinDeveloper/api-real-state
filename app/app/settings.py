@@ -28,12 +28,12 @@ DEBUG = bool(int(os.environ.get('DEBUG', 0)))
 
 # ALLOWED_HOSTS = ['*']
 ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS.extend(
-#     filter(
-#         None,
-#         os.environ.get('ALLOWED_HOSTS', '').split(','),
-#     )
-# )
+ALLOWED_HOSTS.extend(
+    filter(
+        None,
+        os.environ.get('ALLOWED_HOSTS', '').split(','),
+    )
+)
 
 
 # Application definition
@@ -149,10 +149,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = 'core.User'
 
-CORS_ALLOW_CREDENTIALS=False
+CORS_ALLOW_CREDENTIALS=True
 CORS_ORIGIN_ALLOW_ALL = bool(os.environ.get('DEV'))
 CORS_ALLOWED_ORIGINS = [
-    "http://127.0.0.1:3000"
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
 ]
 CORS_ALLOW_METHODS = [
 'DELETE',
@@ -175,6 +176,7 @@ CORS_ALLOW_HEADERS = [
 'x-requested-with',
 ]
 CORS_ORIGIN_WHITELIST = [
+    "http://localhost:3000",
     "http://127.0.0.1:3000",
 ]
 
