@@ -20,6 +20,7 @@ from core.models import (
     Company,
     Referral,
     Commission,
+    Investment
 )
 
 from project import serializers
@@ -103,5 +104,14 @@ class CompanyViewSets(viewsets.ModelViewSet):
 
     serializer_class = serializers.CompanySerializerAdmin
     queryset = Company.objects.all()
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+class InvestmentAdminViewSets(viewsets.ModelViewSet):
+    """View for manage Investment APIs"""
+
+    serializer_class = serializers.InvestmentManagementSerializer
+    queryset = Investment.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]

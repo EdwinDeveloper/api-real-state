@@ -53,6 +53,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     referrals = models.ManyToManyField('Referral')
     investments = models.ManyToManyField('Project')
+    invest = models.ManyToManyField('Investment')
 
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
@@ -219,13 +220,14 @@ class Referral(models.Model):
         return str(self.project.id)
 
 
-# class Investment(models.Model):
-#     """Investments o users"""
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     commission = models.CharField(max_length=255)
-#     status = models.CharField(max_length=20)
-#     user_id = models.CharField(max_length=255, default='')
-#     project = models.ForeignKey(
-#         Project,
-#         on_delete=models.DO_NOTHING,
-#     )
+class Investment(models.Model):
+    """Investments o users"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    commission = models.CharField(max_length=255)
+    status = models.CharField(max_length=20, default='waiting')
+    user_id = models.CharField(max_length=255, default='')
+    paid = models.BooleanField(default=False)
+    project = models.ForeignKey(
+        Project,
+        on_delete=models.DO_NOTHING,
+    )

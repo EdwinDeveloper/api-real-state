@@ -11,9 +11,8 @@ from core.models import (
     Referral,
     Commission,
     User,
+    Investment,
 )
-import json
-import uuid
 from collections import OrderedDict
 from rest_framework import status
 from rest_framework.response import Response
@@ -293,3 +292,29 @@ class CommissionSerializerAdmin(serializers.ModelSerializer):
             return result
         
         return data
+
+
+class InvestmentSerializer(serializers.ModelSerializer):
+    """Investments"""
+
+    project = serializers.SerializerMethodField()
+
+    class Meta:
+        model = Investment
+        fields = ('id', 'commission', 'status', 'user_id', 'project')
+        read_only_fields = ['id']
+    
+    def get_project(self, validate_data):
+        """get investment"""
+        project = Project.objects.get(id=validate_data.project.id)
+        serializers = ProjectSerializer(project)
+        return serializers.data
+    
+
+class InvestmentManagementSerializer(serializers.ModelSerializer):
+    """Investments"""
+
+    class Meta:
+        model = Investment
+        fields = '__all__'
+        read_only_fields = ['id']
