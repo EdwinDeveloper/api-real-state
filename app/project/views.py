@@ -78,11 +78,11 @@ class ProjectViewSets(viewsets.ModelViewSet):
         """Create a new Recipe"""
         serializer.save()
 
-    def list(self, request, *args, **kwargs):
-        if request.method == 'GET':
-            res = super(ProjectViewSets, self).list(request, *args, **kwargs)
-            res.data = {"status": "success", "message": "all projects", "data": res.data}
-            return res
+    # def list(self, request, *args, **kwargs):
+    #     if request.method == 'GET':
+    #         res = super(ProjectViewSets, self).list(request, *args, **kwargs)
+    #         res.data = {"status": "success", "message": "all projects", "data": res.data}
+    #         return res
 
 
 class ProjectAdminViewSets(viewsets.ModelViewSet):
