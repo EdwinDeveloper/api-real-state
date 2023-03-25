@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'project',
     'logic',
     'corsheaders',
+    'db',
 ]
 
 MIDDLEWARE = [
