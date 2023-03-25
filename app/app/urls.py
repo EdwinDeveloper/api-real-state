@@ -22,6 +22,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from core import views as core_views
+from db import views as db_views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -36,6 +37,7 @@ urlpatterns = [
     path('api/recipe/', include('recipe.urls')),
     path('api/company/', include('project.urls')),
     path('api/logic', include('logic.urls')),
+    path('backup/', db_views.download_database_backup_view, name='download_database_backup'),
 ]
 
 if settings.DEBUG:
