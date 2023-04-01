@@ -36,8 +36,6 @@ def download_database_backup(request):
         shell=True
     ).communicate()[0]
 
-    # response = HttpResponse(backup_file)
-
     response = FileResponse(backup_file, content_type='application/octet-stream')
     response['Content-Disposition'] = f'attachment; filename={filename}'
 
