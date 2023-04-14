@@ -16,7 +16,7 @@ from django.http import HttpResponse
 from project.serializers import (
     ProjectSerializer,
     ReferralSerializer,
-    CommissionSerializer,
+    BonusSerializer,
     CompanySerializer,
     ReferralManagementSerializer,
     InvestmentSerializer,
@@ -28,7 +28,7 @@ from core.models import (
     Project,
     Referral,
     User,
-    Commission,
+    Bonus,
     Company,
     Investment,
 )
@@ -42,7 +42,7 @@ class UserSerializer(serializers.ModelSerializer):
     # investments = ProjectSerializer(many=True, required=False)
     investments = serializers.SerializerMethodField()
     videos = serializers.SerializerMethodField('get_videos')
-    commissions = serializers.SerializerMethodField('get_all_commissions')
+    bonuses = serializers.SerializerMethodField('get_all_bonuses')
     companies = serializers.SerializerMethodField('get_all_companies')
     users = serializers.SerializerMethodField('get_all_users_not_staff')
 
@@ -53,7 +53,7 @@ class UserSerializer(serializers.ModelSerializer):
             'gender', 'birthday', 'email',
             'password', 'name', 'last_name',
             'is_active', 'is_staff', 'investments',
-            'referrals', 'projects', 'videos', 'commissions',
+            'referrals', 'projects', 'videos', 'bonuses',
             'companies', 'users'
         ]
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
@@ -110,12 +110,12 @@ class UserSerializer(serializers.ModelSerializer):
         serialized = ProjectSerializer(projects, many=True)
         return serialized.data
 
-    def get_all_commissions(self, validated_data):
-        """get all commissions"""
+    def get_all_bonuses(self, validated_data):
+        """get all bonuses"""
         userIsStaff = User.objects.filter(email=validated_data, is_staff=True).exists()
         if userIsStaff:    
-            commissions = Commission.objects.all()
-            serialized = CommissionSerializer(commissions, many=True)
+            bonuses = Bonus.objects.all()
+            serialized = BonusSerializer(bonuses, many=True)
             return serialized.data
 
     def get_all_companies(self, validate_data):

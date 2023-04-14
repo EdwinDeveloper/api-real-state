@@ -9,13 +9,11 @@ from core.models import (
     Detail,
     Extra,
     Referral,
-    Commission,
+    Bonus,
     User,
     Investment,
 )
 from collections import OrderedDict
-from rest_framework import status
-from rest_framework.response import Response
 
 
 class ImageSerializer(serializers.ModelSerializer):
@@ -78,7 +76,7 @@ class ProjectSerializer(serializers.ModelSerializer):
             'description', 'pre_sale_price', 'pre_sale_date',
             'premises_delivery_date', 'rent_price_approximate',
             'resale_price_approximate', 'images', 'details',
-            'extras', 'company_related' , 'company', 'commission',
+            'extras', 'company_related' , 'company', 'bonus',
         ]
         read_only_fields = ['id']
 
@@ -203,7 +201,7 @@ class ReferralManagementSerializer(serializers.ModelSerializer):
     class Meta:
         model = Referral
         fields = ('id', 'phone_number', 'country_code', 'gender', 'name', 'last_name',
-            'project', 'commission', 'status', 'referrals')
+            'project', 'bonus', 'status', 'referrals')
         read_only_fields = ['id']
 
     def get_referrals(self, obj):
@@ -222,7 +220,7 @@ class ReferralSerializer(serializers.ModelSerializer):
     class Meta:
         model = Referral
         fields = ('id', 'country_code', 'phone_number', 'gender', 'name', 'user_id',
-         'last_name', 'project', 'commission', 'status', 'info_project', )
+         'last_name', 'project', 'bonus', 'status', 'info_project', )
         read_only_fields = ['id']
 
     def to_representation(self, instance):
@@ -250,8 +248,8 @@ class ReferralSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data, **kwargs):
         """create a referral"""
-        project_commission = validated_data['project'].pre_sale_price * Commission.objects.get(id=validated_data['commission']).percentage
-        validated_data['commission'] = project_commission
+        project_bonus = validated_data['project'].pre_sale_price * Bonus.objects.get(id=validated_data['bonus']).percentage
+        validated_data['bonus'] = project_bonus
         referral = Referral.objects.create(**validated_data)
         user = User.objects.get(id=validated_data['user_id'])
         user.referrals.add(referral)
@@ -259,20 +257,20 @@ class ReferralSerializer(serializers.ModelSerializer):
         return referral
 
 
-class CommissionSerializer(serializers.ModelSerializer):
-    """Commission serializer"""
+class BonusSerializer(serializers.ModelSerializer):
+    """Bonus serializer"""
 
     class Meta:
-        model = Commission
+        model = Bonus
         fields = '__all__'
         read_only_fields = ['id']
 
 
-class CommissionSerializerAdmin(serializers.ModelSerializer):
-    """Commission serializer"""
+class BonusSerializerAdmin(serializers.ModelSerializer):
+    """Bonus serializer"""
 
     class Meta:
-        model = Commission
+        model = Bonus
         fields = '__all__'
         read_only_fields = ['id']
 
@@ -281,13 +279,13 @@ class CommissionSerializerAdmin(serializers.ModelSerializer):
         if self.context['request'].method == 'POST':
             result = OrderedDict()
             result['data'] = data
-            result['message'] = ['Commission Created']
+            result['message'] = ['Bonus Created']
             result['status'] = 'success'
             return result
         if self.context['request'].method == 'PATCH':
             result = OrderedDict()
             result['data'] = data
-            result['message'] = ['Commission Updated']
+            result['message'] = ['Bonus Updated']
             result['status'] = 'success'
             return result
         
@@ -301,7 +299,7 @@ class InvestmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Investment
-        fields = ('id', 'commission', 'status', 'user_id', 'project')
+        fields = ('id', 'bonus', 'status', 'user_id', 'project')
         read_only_fields = ['id']
     
     def get_project(self, validate_data):

@@ -126,8 +126,8 @@ class Company(models.Model):
         return self.name
 
 
-class Commission(models.Model):
-    """Commission"""
+class Bonus(models.Model):
+    """Bonus"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     description = models.CharField(max_length=255, null=False)
     percentage = models.DecimalField(max_digits=6, decimal_places=4)
@@ -148,8 +148,8 @@ class Project(models.Model):
     model = models.CharField(max_length=255, unique=True)
     icon = models.TextField(blank=True)
 
-    commission = models.ForeignKey(
-        Commission,
+    bonus = models.ForeignKey(
+        Bonus,
         on_delete=models.DO_NOTHING
     )
 
@@ -212,7 +212,7 @@ class Referral(models.Model):
         Project,
         on_delete=models.DO_NOTHING,
     )
-    commission = models.CharField(max_length=255)
+    bonus = models.CharField(max_length=255)
     status = models.CharField(max_length=20)
     user_id = models.CharField(max_length=255, default='')
 
@@ -223,7 +223,7 @@ class Referral(models.Model):
 class Investment(models.Model):
     """Investments o users"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    commission = models.CharField(max_length=255)
+    bonus = models.CharField(max_length=255)
     status = models.CharField(max_length=20, default='waiting')
     user_id = models.CharField(max_length=255, default='')
     paid = models.BooleanField(default=False)

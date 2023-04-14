@@ -16,7 +16,7 @@ router.register('projects', views.ProjectViewSets)
 router.register('projectsAdmin', views.ProjectAdminViewSets)
 router.register('companies', views.CompanyViewSets)
 router.register('referral', views.ReferralViewSets)
-router.register('commission', views.CommissionViewSets)
+router.register('bonus', views.BonusViewSets)
 router.register('investment', views.InvestmentAdminViewSets)
 
 app_name = 'project'

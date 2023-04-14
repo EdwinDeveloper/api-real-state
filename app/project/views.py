@@ -19,7 +19,7 @@ from core.models import (
     Project,
     Company,
     Referral,
-    Commission,
+    Bonus,
     Investment
 )
 
@@ -55,10 +55,10 @@ class ReferralViewSets(viewsets.ModelViewSet):
     #         return Response(objectSerializer.errors, status. HTTP_400_BAD_REQUEST)
 
 
-class CommissionViewSets(viewsets.ModelViewSet):
-    """View for manage commissions APIs"""
-    serializer_class = serializers.CommissionSerializerAdmin
-    queryset = Commission.objects.all()
+class BonusViewSets(viewsets.ModelViewSet):
+    """View for manage bonuses APIs"""
+    serializer_class = serializers.BonusSerializerAdmin
+    queryset = Bonus.objects.all()
     authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated]
 
