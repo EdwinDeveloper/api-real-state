@@ -215,9 +215,14 @@ class Referral(models.Model):
     bonus = models.CharField(max_length=255)
     status = models.CharField(max_length=20)
     user_id = models.CharField(max_length=255, default='')
+    staff = models.ForeignKey(
+        User,
+        on_delete=models.DO_NOTHING,
+        default=None
+    )
 
     def __str__(self):
-        return str(self.project.id)
+        return f"{self.project.id}/{self.staff.id}"
 
 
 class Investment(models.Model):
@@ -225,6 +230,7 @@ class Investment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     bonus = models.CharField(max_length=255)
     status = models.CharField(max_length=20, default='waiting')
+    ordinary = models.IntegerField(null=True)
     user_id = models.CharField(max_length=255, default='')
     paid = models.BooleanField(default=False)
     project = models.ForeignKey(

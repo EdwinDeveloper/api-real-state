@@ -2,6 +2,7 @@
 Views for the projects APIs
 """
 from rest_framework import serializers
+from drf_spectacular.utils import extend_schema_field
 from core.models import (
     Company,
     Project,
@@ -44,11 +45,18 @@ class ExtraSerializer(serializers.ModelSerializer):
 
     
 class ProjectReferralSerializer(serializers.ModelSerializer):
-    """ProjectReferral Serializer"""
+    """Project Referral Serializer"""
 
     class Meta:
         model = Project
         fields = ['name', 'model']
+        read_only_fields = ['id']
+
+class StaffReferralSerializer(serializers.ModelSerializer):
+    """Staff Referral Serializer"""
+    class Meta:
+        model = User
+        fields = ['name', 'last_name']
         read_only_fields = ['id']
 
 
@@ -80,6 +88,7 @@ class ProjectSerializer(serializers.ModelSerializer):
         ]
         read_only_fields = ['id']
 
+    # @extend_schema_field(str)
     def get_company_name(self, obj):
         """get name company"""
         company = Company.objects.filter(id=obj.company_related_id)
@@ -216,11 +225,12 @@ class ReferralSerializer(serializers.ModelSerializer):
     """Referral serializer"""
 
     info_project = serializers.SerializerMethodField('get_project_info')
+    info_staff = serializers.SerializerMethodField('get_staff_info')
 
     class Meta:
         model = Referral
         fields = ('id', 'country_code', 'phone_number', 'gender', 'name', 'user_id',
-         'last_name', 'project', 'bonus', 'status', 'info_project', )
+         'last_name', 'project', 'bonus', 'status', 'info_project', 'staff', 'info_staff')
         read_only_fields = ['id']
 
     def to_representation(self, instance):
@@ -242,8 +252,16 @@ class ReferralSerializer(serializers.ModelSerializer):
 
     def get_project_info(self, obj):
         """get project info"""
-        project = Project.objects.filter(id=f"{obj}")
+        project_id = str(obj).split('/')[0]
+        project = Project.objects.filter(id=project_id)
         serialized = ProjectReferralSerializer(project, many=True)
+        return  serialized.data
+
+    def get_staff_info(self, obj):
+        """get staff info"""
+        staff_id = str(obj).split('/')[1]
+        staff = User.objects.filter(id=staff_id)
+        serialized = StaffReferralSerializer(staff, many=True)
         return  serialized.data
 
     def create(self, validated_data, **kwargs):
@@ -299,7 +317,7 @@ class InvestmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Investment
-        fields = ('id', 'bonus', 'status', 'user_id', 'project')
+        fields = ('id', 'bonus', 'status', 'user_id', 'project', 'ordinary')
         read_only_fields = ['id']
     
     def get_project(self, validate_data):
@@ -316,3 +334,10 @@ class InvestmentManagementSerializer(serializers.ModelSerializer):
         model = Investment
         fields = '__all__'
         read_only_fields = ['id']
+    
+    def create(self, validated_data, **kwargs):  
+        """create an investment"""
+        previous = Investment.objects.filter(user_id=validated_data['user_id'])
+        validated_data['ordinary'] = len(previous)+1
+        investment = Investment.objects.create(**validated_data)
+        return investment

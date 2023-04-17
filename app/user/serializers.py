@@ -45,6 +45,7 @@ class UserSerializer(serializers.ModelSerializer):
     bonuses = serializers.SerializerMethodField('get_all_bonuses')
     companies = serializers.SerializerMethodField('get_all_companies')
     users = serializers.SerializerMethodField('get_all_users_not_staff')
+    staff = serializers.SerializerMethodField('get_all_users_staff')
 
     class Meta:
         model = get_user_model()
@@ -54,7 +55,7 @@ class UserSerializer(serializers.ModelSerializer):
             'password', 'name', 'last_name',
             'is_active', 'is_staff', 'investments',
             'referrals', 'projects', 'videos', 'bonuses',
-            'companies', 'users'
+            'companies', 'users', 'staff'
         ]
         extra_kwargs = {'password': {'write_only': True, 'min_length': 5}}
         read_only_fiels = ['id']
@@ -103,6 +104,12 @@ class UserSerializer(serializers.ModelSerializer):
             users =  User.objects.filter(is_staff=False)
             serialized = UserManagementSerializer(users, many=True)
             return serialized.data
+    
+    def get_all_users_staff(self, validate_data):
+        """get all users staff"""
+        userIsStaff = User.objects.filter(is_staff=True)
+        serialized = UserManagementSerializer(userIsStaff, many=True)
+        return serialized.data
 
     def get_All_Projects(self, validated_data):
         """get all projects"""
