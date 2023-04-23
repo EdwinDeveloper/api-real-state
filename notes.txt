@@ -1,0 +1,1 @@
+pg_dump -U <user> -d <db> -f realstate.sql --format=plain
