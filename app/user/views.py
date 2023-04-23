@@ -17,7 +17,7 @@ from rest_framework.response import Response
 
 from user.serializers import (
     UserSerializer,
-    UserSetInvestmentSerializer,
+    UserStaffSerializer,
     AuthTokenSerializer,
 )
 from core.models import (
@@ -34,42 +34,34 @@ class CreateUserView(
     serializer_class = UserSerializer
 
 
-@extend_schema_view(
-    list=extend_schema(
-        parameters=[
-            OpenApiParameter(
-                'investmentsw',
-                OpenApiTypes.STR,
-                description='Adding a new investment to an user'
-            )
-        ]
-    )
-)
+# @extend_schema_view(
+#     list=extend_schema(
+#         parameters=[
+#             OpenApiParameter(
+#                 'investmentsw',
+#                 OpenApiTypes.STR,
+#                 description='Adding a new investment to an user'
+#             )
+#         ]
+#     )
+# )
 class UserViewSets(viewsets.ModelViewSet):
     """Logic User"""
-    serializer_class = UserSetInvestmentSerializer
+    serializer_class = UserStaffSerializer
     queryset = User.objects.all()
     authentication_classes = [authentication.TokenAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-
-    @action(methods=['POST'], detail=True, url_path='set-investment')
-    def set_investment(self, request, pk=None):
-        """set project to a User"""
+    
+    @action(methods=['PATCH'], detail=False, url_path='active-user')
+    def patch_user(self, request, pk=None):
+        """Path user"""
         try:
-
-            objectSerializer = UserSetInvestmentSerializer(data=request.data)
-
-            if objectSerializer.is_valid():
-                project = Project.objects.get(id=objectSerializer.data['investment_id'])
-                user = User.objects.get(id=objectSerializer.data['user_id'])
-                user.investments.add(project)
-                user.save()
-
-                return Response({ 'message': 'Investment created' }, status.HTTP_200_OK)
-            
-            return Response(objectSerializer.errors, status. HTTP_400_BAD_REQUEST)
+            user = User.objects.get(id=request.data['id'])
+            user.is_active = request.data['is_active']
+            user.save()
+            return Response({ 'is_active': user.is_active }, status.HTTP_200_OK)
         except:
-            return Response(objectSerializer.errors, status. HTTP_400_BAD_REQUEST)
+            return Response( { "error": "error" } , status. HTTP_400_BAD_REQUEST)
 
 
 class CreateTokenView(ObtainAuthToken):

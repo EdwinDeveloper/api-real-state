@@ -187,15 +187,15 @@ class UserSerializer(serializers.ModelSerializer):
         return "Hola"
 
 
-class UserSetInvestmentSerializer(serializers.ModelSerializer):
+class UserStaffSerializer(serializers.ModelSerializer):
     """Serializer to set a new investment"""
 
-    user_id = serializers.CharField(max_length=255)
-    investment_id = serializers.CharField(max_length=255)
+    # user_id = serializers.CharField(max_length=255)
+    # investment_id = serializers.CharField(max_length=255)
 
     class Meta:
         model = User
-        fields = ['id', 'user_id', 'investment_id']
+        fields = ['id', 'is_active']
         read_only_fiels = ['id']
 
 class UserManagementSerializer(serializers.ModelSerializer):
@@ -206,7 +206,7 @@ class UserManagementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'name', 'last_name', 'country_code', 'phone_number', 'email', 'investments', 'referrals']
+        fields = ['id', 'name', 'last_name', 'country_code', 'phone_number', 'email', 'investments', 'referrals', 'is_active']
 
     def get_investments(self, validate_data):
         """get all user invertions"""
