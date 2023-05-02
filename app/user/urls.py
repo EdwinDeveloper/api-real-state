@@ -12,6 +12,7 @@ from user import views
 
 router = DefaultRouter()  # We create a default router
 router.register('set', views.UserViewSets)
+router.register('end', views.UserEndSerializer)
 
 app_name = 'user'
 
