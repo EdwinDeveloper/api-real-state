@@ -35,6 +35,13 @@ from core.models import (
     Project,
 )
 
+# from django.utils.http import urlsafe_base64_decode
+from django.utils.http import urlsafe_base64_encode
+from django.utils.encoding import force_bytes, force_str
+from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.forms import PasswordResetForm, SetPasswordForm
+
 
 class CreateUserView(
     generics.CreateAPIView,
@@ -77,21 +84,37 @@ class UserEndSerializer(viewsets.ModelViewSet):
 
     serializer_class = UserEndSerializer
     queryset = User.objects.all()
-    authentication_classes = [authentication.TokenAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+
+    """End user reset password"""
+    @action(methods=['POST'], detail=False, url_path='reset')
+    def reset(self, request, *args, **kwargs):
+        try:
+            uidb64 = request.data.get('uidb64')
+            token = request.data.get('token')
+            uid = urlsafe_base64_decode(uidb64).decode('utf-8')
+            user = User.objects.get(pk=uid)
+            if user is not None and default_token_generator.check_token(user, token):
+                user.set_password(request.data.get('password'))
+                user.save()
+                return Response( { "message": "Contraseña modificada" } , status.HTTP_201_OK)
+            else:
+                return Response( { "message": "Usuario invalido" } , status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response( { "error": e.args[0] } , status.HTTP_400_BAD_REQUEST)
 
     """End user management"""
     @action(methods=['POST'], detail=False, url_path='reset-password')
     def password_reset(self, request, pk=None):
         try:
-            print("email : ", request.data['email'])
             email = request.data['email']
             user = User.objects.filter(email=email).first()
+            # reset_token = user.generate_reset_token()
             if user:
-                token = str(uuid.uuid4())
+                uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+                token = default_token_generator.make_token(user)
                 user.token = token
                 user.save()
-                reset_password_link = f'http://localhost:3000/reset-password?token={token}'
+                reset_password_link = f'http://localhost:8000/api/user/reset-password-template?token={token}&uidb64={uidb64}'
                 subject = 'Password Reset Request'
                 html_message = render_to_string('email.html', {'reset_password_link': reset_password_link})
                 plain_message = strip_tags(html_message)
