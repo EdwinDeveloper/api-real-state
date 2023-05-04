@@ -96,7 +96,7 @@ class UserEndSerializer(viewsets.ModelViewSet):
             if user is not None and default_token_generator.check_token(user, token):
                 user.set_password(request.data.get('password'))
                 user.save()
-                return Response( { "message": "Contraseña modificada" } , status.HTTP_201_OK)
+                return Response( { "message": "Contraseña modificada" } , status.HTTP_200_OK)
             else:
                 return Response( { "message": "Usuario invalido" } , status.HTTP_400_BAD_REQUEST)
         except Exception as e:
