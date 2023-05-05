@@ -23,6 +23,7 @@ services: #services fo the compose
       - DEV=true
       - DEBUG=1
       - EMAIL_PASS=${EMAIL_PASS}
+      - SERVER_HOST=${SERVER_HOST}
     depends_on:
       - db
 

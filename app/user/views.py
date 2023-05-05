@@ -7,6 +7,7 @@ from drf_spectacular.utils import (
     OpenApiParameter,
     OpenApiTypes,
 )
+import os
 from rest_framework import (
     generics, authentication, permissions, mixins, viewsets, status
 )
@@ -106,6 +107,7 @@ class UserEndSerializer(viewsets.ModelViewSet):
     @action(methods=['POST'], detail=False, url_path='reset-password')
     def password_reset(self, request, pk=None):
         try:
+            server_host = os.environ.get('SERVER_HOST')
             email = request.data['email']
             user = User.objects.filter(email=email).first()
             # reset_token = user.generate_reset_token()
@@ -114,7 +116,7 @@ class UserEndSerializer(viewsets.ModelViewSet):
                 token = default_token_generator.make_token(user)
                 user.token = token
                 user.save()
-                reset_password_link = f'http://localhost:8000/api/user/reset-password-template?token={token}&uidb64={uidb64}'
+                reset_password_link = f'{server_host}/api/user/reset-password-template?token={token}&uidb64={uidb64}'
                 subject = 'Password Reset Request'
                 html_message = render_to_string('email.html', {'reset_password_link': reset_password_link})
                 plain_message = strip_tags(html_message)
@@ -122,10 +124,16 @@ class UserEndSerializer(viewsets.ModelViewSet):
                 to = email
                 send_mail(subject, plain_message, from_email, [to], html_message=html_message)
                 messages.success(request, 'Email sent')
-                return Response({ "message": "Email sended" } , status.HTTP_200_OK)
+                return Response({ 
+                    "message": "Email Sended, check your email"                    
+                 } , status.HTTP_200_OK)
             else:
                 messages.error(request, 'User not found')
-                return Response({ "message": "User not available" } , status.HTTP_400_BAD_REQUEST)
+                return Response( {
+                    "email": [
+                        "Email does not exist"
+                    ]
+                } , status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response( { "error": e.args[0] } , status.HTTP_400_BAD_REQUEST)
 
