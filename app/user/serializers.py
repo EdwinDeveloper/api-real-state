@@ -197,6 +197,16 @@ class UserStaffSerializer(serializers.ModelSerializer):
         model = User
         fields = ['id', 'is_active']
         read_only_fiels = ['id']
+    
+
+class UserEndSerializer(serializers.ModelSerializer):
+    """Serializer to manage the end user"""
+
+    class Meta:
+        model = User
+        fields = ['email']
+        read_only_fiels = ['id']
+
 
 class UserManagementSerializer(serializers.ModelSerializer):
     """Serializer to manage users from the platform"""

@@ -73,7 +73,7 @@ ROOT_URLCONF = 'app.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -101,6 +101,13 @@ DATABASES = {
         'PASSWORD': os.environ.get('DB_PASS'),
     }
 }
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'inversionescgadm@gmail.com'
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_PASS')
 
 
 # Password validation
@@ -138,6 +145,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = '/static/static/'
+
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 MEDIA_URL = '/static/media/'
 
 MEDIA_ROOT = '/vol/web/media'

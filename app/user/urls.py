@@ -9,9 +9,11 @@ from django.urls import (
 from rest_framework.routers import DefaultRouter
 
 from user import views
+from user import resetview
 
 router = DefaultRouter()  # We create a default router
 router.register('set', views.UserViewSets)
+router.register('end', views.UserEndSerializer)
 
 app_name = 'user'
 
@@ -21,5 +23,6 @@ urlpatterns = [
     path('token/', views.CreateTokenView.as_view(), name='token'),
     path('me/', views.ManageUserView.as_view(), name='me'),
     # path('user/', views.UserViewSets.as_view({'get': 'list'}), name='user')
+    path('reset-password-template/', resetview.reset_password, name='reset_password'),
     path('', include(router.urls)),
 ]
