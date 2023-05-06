@@ -17,11 +17,12 @@ services: #services fo the compose
              python3 manage.py runserver 0.0.0.0:8000"
     environment:
       - DB_HOST=db
-      - DB_NAME=devdb
-      - DB_USER=devuser
-      - DB_PASS=changeme
+      - DB_NAME=${DB_NAME}
+      - DB_USER=${DB_USER}
+      - DB_PASS=${DB_PASS}
       - DEV=true
       - DEBUG=1
+      - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
       - SERVER_HOST=${SERVER_HOST}
     depends_on:
@@ -34,10 +35,9 @@ services: #services fo the compose
     ports:
       - "5432:5432"
     environment:
-      - POSTGRES_DB=devdb
-      - POSTGRES_USER=devuser
-      - POSTGRES_PASSWORD=changeme
-
+      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
 volumes:
   dev-db-data:
   dev-static-data:
