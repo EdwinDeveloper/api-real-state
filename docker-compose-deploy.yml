@@ -19,6 +19,8 @@ services:
       - DB_PASS=${DB_PASS}
       - SECRET_KEY=${DJANGO_SECRET_KEY}
       - ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
+      - CORS_ORIGIN=${CORS_ORIGIN}
+      - DEBUG_STATUS=${DEBUG_STATUS}
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
       - SERVER_HOST=${SERVER_HOST}
@@ -44,7 +46,7 @@ services:
       - app
     ports:
       # - 8000:8000
-      - 80:8000
+      - 8000:8000
     volumes:
       - static-data:/vol/static
   

@@ -10,7 +10,7 @@ COPY ./app /app
 WORKDIR /app
 EXPOSE 8000
 
-ARG DEV=false
+ARG DEBUG_STATUS=false
 RUN python3 -m venv /py && \
     #Create a new virtual environment that our system will use
     /py/bin/pip install --upgrade pip && \
@@ -23,7 +23,7 @@ RUN python3 -m venv /py && \
         #Install the dependencies we list
     /py/bin/pip install -r /tmp/requirements.txt && \ 
     #Install dependencies from requirement file
-    if [ $DEV = "true" ]; \
+    if [ $DEBUG_STATUS = "true" ]; \
         then /py/bin/pip install -r /tmp/requirements.dev.txt; \
     fi && \
     rm -rf /tmp && \
