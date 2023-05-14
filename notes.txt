@@ -1,1 +1,6 @@
 pg_dump -U <user> -d <db> -f realstate.sql --format=plain
+pg_dump -U devuser -d prodrealstatedb -f realstate.sql --format=plain
+
+psql -U realstateadmin -d prodrealstatedb -c "DROP DATABASE IF EXISTS prodrealstatedb;" && \
+psql -U realstateadmin -d prodrealstatedb -c "CREATE DATABASE prodrealstatedb;" && \
+psql -U realstateadmin -d prodrealstatedb -f realstate.sql
