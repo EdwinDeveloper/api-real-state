@@ -110,7 +110,6 @@ class UserEndSerializer(viewsets.ModelViewSet):
             server_host = os.environ.get('SERVER_HOST')
             email = request.data['email']
             user = User.objects.filter(email=email).first()
-            # reset_token = user.generate_reset_token()
             if user:
                 uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
                 token = default_token_generator.make_token(user)
@@ -120,7 +119,8 @@ class UserEndSerializer(viewsets.ModelViewSet):
                 subject = 'Password Reset Request'
                 html_message = render_to_string('email.html', {'reset_password_link': reset_password_link})
                 plain_message = strip_tags(html_message)
-                from_email = 'lafamiliaesgrande@gmail.com'
+                from_email =  os.environ.get('EMAIL_USER')
+                print("the email : ", from_email)
                 to = email
                 send_mail(subject, plain_message, from_email, [to], html_message=html_message)
                 messages.success(request, 'Email sent')
