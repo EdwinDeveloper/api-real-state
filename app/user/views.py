@@ -71,13 +71,24 @@ class UserViewSets(viewsets.ModelViewSet):
     permission_classes = [permissions.IsAuthenticated]
     
     @action(methods=['PATCH'], detail=False, url_path='active-user')
-    def patch_user(self, request, pk=None):
+    def active_or_inactive_user_or_staff(self, request, pk=None):
         """Path user"""
         try:
             user = User.objects.get(id=request.data['id'])
             user.is_active = request.data['is_active']
             user.save()
             return Response({ 'is_active': user.is_active }, status.HTTP_200_OK)
+        except:
+            return Response( { "error": "error" } , status. HTTP_400_BAD_REQUEST)
+    
+    @action(methods=['PATCH'], detail=False, url_path='make-staff')
+    def make_staff(self, request, pk=None):
+        """Path user"""
+        try:
+            user = User.objects.get(id=request.data['id'])
+            user.is_staff = request.data['is_staff']
+            user.save()
+            return Response({ 'is_staff': user.is_staff }, status.HTTP_200_OK)
         except:
             return Response( { "error": "error" } , status. HTTP_400_BAD_REQUEST)
 
@@ -120,7 +131,6 @@ class UserEndSerializer(viewsets.ModelViewSet):
                 html_message = render_to_string('email.html', {'reset_password_link': reset_password_link})
                 plain_message = strip_tags(html_message)
                 from_email =  os.environ.get('EMAIL_USER')
-                print("the email : ", from_email)
                 to = email
                 send_mail(subject, plain_message, from_email, [to], html_message=html_message)
                 messages.success(request, 'Email sent')
