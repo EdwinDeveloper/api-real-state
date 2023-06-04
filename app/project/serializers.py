@@ -85,6 +85,8 @@ class ProjectSerializer(serializers.ModelSerializer):
             'premises_delivery_date', 'rent_price_approximate',
             'resale_price_approximate', 'images', 'details',
             'extras', 'company_related' , 'company', 'bonus',
+            'bedrooms', 'bathrooms', 'garage', 'kitchen',
+            'gym', 'security', 'pool', 'yoga',
         ]
         read_only_fields = ['id']
 

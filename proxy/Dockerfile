@@ -19,6 +19,10 @@ ENV APP_PORT=9000
 # We switch to the root user
 USER root
 
+# Install Certbot and obtain SSL certificate
+#RUN apk add --no-cache certbot && \
+#    certbot certonly --standalone -d example.com -d www.example.com --non-interactive --agree-tos -m edwindeveloper@outlook.com
+
 # We create a new directory
 RUN mkdir -p /vol/static && \
     # We give read permitions from the static forder

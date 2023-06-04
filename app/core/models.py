@@ -161,6 +161,16 @@ class Project(models.Model):
 
     description = models.CharField(max_length=255)
 
+    bedrooms = models.IntegerField(default=0)
+    bathrooms = models.IntegerField(default=0)
+    garage = models.IntegerField(default=0)
+    kitchen = models.IntegerField(default=0)
+
+    gym = models.BooleanField(default=False)
+    security = models.BooleanField(default=False)
+    pool = models.BooleanField(default=False)
+    yoga = models.BooleanField(default=False)
+
     images = models.ManyToManyField('Image', blank=True, null=True)
     details = models.ManyToManyField('Detail')
     extras = models.ManyToManyField('Extra')
