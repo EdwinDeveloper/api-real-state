@@ -11,6 +11,7 @@ from django.contrib.auth.models import (
     BaseUserManager,
     PermissionsMixin,
 )
+from django.utils import timezone
 
 
 def recipe_image_file_path(instance, filename):
@@ -230,6 +231,10 @@ class Referral(models.Model):
         on_delete=models.DO_NOTHING,
         default=None
     )
+    created_at = models.DateTimeField(default=timezone.now, editable=False)
+
+    def get_iso8601_format(self):
+        return self.created_at.isoformat()
 
     def __str__(self):
         return f"{self.project.id}/{self.staff.id}"
@@ -247,3 +252,36 @@ class Investment(models.Model):
         Project,
         on_delete=models.DO_NOTHING,
     )
+
+
+class YoutubeItem(models.Model):
+    """Youtube user element"""
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    kind = models.CharField(max_length=50)
+    etag = models.CharField(max_length=60)
+    id_kind = models.CharField(max_length=20)
+    id_video_id = models.CharField(max_length=30, unique=True)
+
+    snippet_published_at = models.CharField(max_length=30)
+    snippet_channel_id = models.CharField(max_length=40)
+    snippet_title = models.CharField(max_length=255)
+    snippet_description = models.CharField(max_length=255)
+
+    snippet_thumbnails_default_url = models.CharField(max_length=255)
+    snippet_thumbnails_default_width = models.IntegerField()
+    snippet_thumbnails_default_height = models.IntegerField()
+
+    snippet_thumbnails_medium_url = models.CharField(max_length=255)
+    snippet_thumbnails_medium_width = models.IntegerField()
+    snippet_thumbnails_medium_height = models.IntegerField()
+
+    snippet_thumbnails_high_url = models.CharField(max_length=255)
+    snippet_thumbnails_high_width = models.IntegerField()
+    snippet_thumbnails_high_height = models.IntegerField()
+
+    snippet_channel_title = models.CharField(max_length=255)
+    snippet_live_broadcast_content = models.CharField(max_length=255)
+    snippet_publish_time = models.CharField(max_length=30)
+
+    def __str__(self):
+        return self.id_video_id
