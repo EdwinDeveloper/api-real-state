@@ -208,11 +208,12 @@ class ReferralManagementSerializer(serializers.ModelSerializer):
     """Get all referrals from one single user"""
 
     referrals = serializers.SerializerMethodField('get_referrals')
+    info_staff = serializers.SerializerMethodField('get_staff_info')
 
     class Meta:
         model = Referral
-        fields = ('id', 'phone_number', 'country_code', 'gender', 'name', 'last_name',
-            'project', 'bonus', 'status', 'referrals')
+        fields = ('id', 'phone_number', 'country_code', 'gender', 'name', 'last_name', 'created_at',
+            'project', 'bonus', 'status', 'referrals', 'info_staff')
         read_only_fields = ['id']
 
     def get_referrals(self, obj):
@@ -220,6 +221,13 @@ class ReferralManagementSerializer(serializers.ModelSerializer):
         userReferrals = Referral.objects.filter(user_id=obj)
         serialized = ReferralSerializer(userReferrals, many=True)
         return serialized.data
+
+    def get_staff_info(self, obj):
+        """get staff info"""
+        staff_id = str(obj).split('/')[1]
+        staff = User.objects.filter(id=staff_id)
+        serialized = StaffReferralSerializer(staff, many=True)
+        return  serialized.data
 
 
 
@@ -231,7 +239,7 @@ class ReferralSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Referral
-        fields = ('id', 'country_code', 'phone_number', 'gender', 'name', 'user_id',
+        fields = ('id', 'country_code', 'phone_number', 'gender', 'name', 'user_id', 'created_at',
          'last_name', 'project', 'bonus', 'status', 'info_project', 'staff', 'info_staff')
         read_only_fields = ['id']
 

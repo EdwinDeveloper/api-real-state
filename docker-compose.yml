@@ -27,6 +27,9 @@ services: #services fo the compose
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
       - SERVER_HOST=${SERVER_HOST}
+
+      - YOUTUBE_KEY=${YOUTUBE_KEY}
+      - YOUTUBE_CHANNEL=${YOUTUBE_CHANNEL}
     depends_on:
       - db
 

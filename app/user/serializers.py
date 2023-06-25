@@ -6,6 +6,7 @@ from django.contrib.auth import (
     get_user_model,
     authenticate,
 )
+import os
 from django.utils.translation import gettext as _
 
 from rest_framework import serializers
@@ -20,7 +21,10 @@ from project.serializers import (
     CompanySerializer,
     ReferralManagementSerializer,
     InvestmentSerializer,
-    InvestmentManagementSerializer
+    InvestmentManagementSerializer,
+)
+from video.serializers import (
+    YoutubeItemSerializer
 )
 from collections import OrderedDict
 
@@ -31,6 +35,7 @@ from core.models import (
     Bonus,
     Company,
     Investment,
+    YoutubeItem,
 )
 
 
@@ -70,7 +75,24 @@ class UserSerializer(serializers.ModelSerializer):
     def get_videos(self, validated_data):
         """get all videos"""
         try:
-            response = requests.get("https://www.googleapis.com/youtube/v3/search?key=AIzaSyBL848RUWQcfJkLmTL2cn4VkWcmSCxiOU8&channelId=UCCf4BrsWz7BaegKR6q29tyQ&part=snippet,id&order=date&maxResults=6")
+            # youtube_key = os.environ.get('YOUTUBE_KEY')
+            # youtube_channel = os.environ.get('YOUTUBE_CHANNEL')
+            # url_google = f"https://www.googleapis.com/youtube/v3/search?key={youtube_key}&channelId={youtube_channel}&part=snippet,id&order=date&maxResults=6"
+            # response = requests.get(url_google)
+            result_videos = YoutubeItem.objects.all()
+            
+            videosSerializer = YoutubeItemSerializer(result_videos, many=True).to_representation(result_videos)
+            return {
+                "kind": "youtube#searchListResponse",
+                "etag": "",
+                "nextPageToken": "",
+                "regionCode": "MX",
+                "pageInfo": {
+                    "totalResults": 0,
+                    "resultsPerPage": 0
+                },
+                "items": videosSerializer
+            }
         except Exception as e:
             return {
                 "kind": "youtube#searchListResponse",

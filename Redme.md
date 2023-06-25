@@ -1,12 +1,18 @@
 # LOG IN INTO OUR PSQL
 psql -U <username> -h <hostname> -p <port>
-psql -U REALSTATEPRODADMIN -h localhost -p 5432
+psql -U <username> -h localhost -p 5432
 
 # CREATING A SQL BACKUP FROM OUTSIDE A CONTAINER
 docker exec -t <container_id> pg_dump --dbname=<database_name> --file=/root/backup/dump_.sql -U <username>
 
+docker exec -t <container_id> pg_dump --dbname=<database_name> --file=/root/backup/dump_realstate.sql -U <username>
+
 # COPY OUR DATABASE INTO OUR DOCKER CONTAINER
-docker cp <container_id>:/root/dump_realstate.sql /root/backup
+docker cp <container_id>:/root/dump_realstate.sql /
+
+docker cp /Users/edwingiovanni/Desktop/dump_realstate.sql <container_id>:/
+
+docker cp <container_id>:/dump_realstate.sql /root/backup
 
 # LOGIN INTO OUR DROPLET USING AN SPECIFIC SSH NAME
 ssh root@143.198.63.104 -i droplet_realstate
@@ -18,12 +24,14 @@ ssh root@143.198.63.104
 scp -i droplet_realstate root@143.198.63.104:/root/backup/dump_realstate.sql /Users/edwingiovanni/Desktop
 
 # IMPORTING OUT BACKUP DATABASE INTO OUR POSTGRES SYSTEM
-psql -U REALSTATEPRODADMIN -d REALSTATEPRODDB3 -f dump_realstate.sql
+psql -U <username> -d <dbname> -f dump_realstate.sql
 
-psql -U REALSTATEPRODADMIN -d REALSTATEPRODDB
+psql -U <USER_DB_NAME> -d <DB_NAME>
 
-createdb -U <USER_DB_NAME> <DB_NAME>
+createdb -U <USER_DB_NAME> -h localhost -p 5432 <DB_NAME>
 
 psql -U <username> -d <database_name>
+
+psql -U <USER_DB_NAME> -d <database_name>
 
 CREATE ROLE devuser;

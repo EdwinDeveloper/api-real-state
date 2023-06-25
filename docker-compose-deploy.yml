@@ -24,6 +24,9 @@ services:
       - EMAIL_USER=${EMAIL_USER}
       - EMAIL_PASS=${EMAIL_PASS}
       - SERVER_HOST=${SERVER_HOST}
+
+      - YOUTUBE_KEY=${YOUTUBE_KEY}
+      - YOUTUBE_CHANNEL=${YOUTUBE_CHANNEL}
     # Depends on the db service
     depends_on:
       - db

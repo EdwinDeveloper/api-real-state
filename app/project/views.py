@@ -27,7 +27,9 @@ from project import serializers
 from collections import OrderedDict
 
 
-class ReferralViewSets(viewsets.ModelViewSet):
+class ReferralViewSets(
+    viewsets.ModelViewSet
+):
     """Referral serializer"""
     serializer_class = serializers.ReferralSerializer
     queryset = Referral.objects.all()
