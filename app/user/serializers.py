@@ -79,7 +79,7 @@ class UserSerializer(serializers.ModelSerializer):
             # youtube_channel = os.environ.get('YOUTUBE_CHANNEL')
             # url_google = f"https://www.googleapis.com/youtube/v3/search?key={youtube_key}&channelId={youtube_channel}&part=snippet,id&order=date&maxResults=6"
             # response = requests.get(url_google)
-            result_videos = YoutubeItem.objects.all()
+            result_videos = YoutubeItem.objects.order_by('-snippet_published_at')[:10]
             
             videosSerializer = YoutubeItemSerializer(result_videos, many=True).to_representation(result_videos)
             return {
