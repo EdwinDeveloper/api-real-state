@@ -80,6 +80,28 @@ class UserViewSets(viewsets.ModelViewSet):
             return Response({ 'is_active': user.is_active }, status.HTTP_200_OK)
         except:
             return Response( { "error": "error" } , status. HTTP_400_BAD_REQUEST)
+        
+    @action(methods=['PATCH'], detail=False, url_path='eliminate-superuser-status')
+    def eliminate_superuser_status(self, request, pk=None):
+        """Eliminate superuser status"""
+        try:
+            user = User.objects.get(id=request.data['id'])
+            user.is_superuser = False
+            user.save()
+            return Response( { 'is_superuser': user.is_superuser }, status.HTTP_200_OK )
+        except Exception as e:
+            return Response( { "error": str(e) } )
+        
+    @action(methods=['PATCH'], detail=False, url_path='activate-superuser-status')
+    def eliminate_superuser_status(self, request, pk=None):
+        """Eliminate superuser status"""
+        try:
+            user = User.objects.get(id=request.data['id'])
+            user.is_superuser = True
+            user.save()
+            return Response( { 'is_superuser': user.is_superuser }, status.HTTP_200_OK )
+        except Exception as e:
+            return Response( { "error": str(e) } )
     
     @action(methods=['PATCH'], detail=False, url_path='make-staff')
     def make_staff(self, request, pk=None):
@@ -96,6 +118,22 @@ class UserEndSerializer(viewsets.ModelViewSet):
 
     serializer_class = UserEndSerializer
     queryset = User.objects.all()
+
+    """Update user data"""
+    @action(methods=['PATCH'], detail=False, url_path="user-update")
+    def user_update(self, request, *args, **kwargs):
+        try:
+            check = User.objects.get(phone_number=request.data['phone_number'])
+            if check.id == request.data['id']:
+                user = User.objects.get(id=request.data['id'])
+                user.name = request.data['name']
+                user.last_name = request.data['last_name']
+                user.phone_number = request.data['phone_number']
+                user.save()
+                return Response( { "message": "Usuario actualizado" } , status.HTTP_200_OK)
+            return Response( { "message": "Telefono ya utilizado" } , status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response( { "error": e.args[0] } , status.HTTP_400_BAD_REQUEST)
 
     """End user reset password"""
     @action(methods=['POST'], detail=False, url_path='reset')
