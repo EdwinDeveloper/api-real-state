@@ -238,7 +238,7 @@ class UserManagementSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['id', 'name', 'last_name', 'country_code', 'phone_number', 'email', 'investments', 'referrals', 'is_active', 'is_staff']
+        fields = ['id', 'name', 'last_name', 'country_code', 'phone_number', 'email', 'investments', 'referrals', 'is_superuser', 'is_active', 'is_staff']
 
     def get_investments(self, validate_data):
         """get all user invertions"""

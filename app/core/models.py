@@ -48,7 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     """User in the system"""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     country_code = models.CharField(max_length=3, null=True)
-    phone_number = models.CharField(max_length=20, null=True)
+    phone_number = models.CharField(max_length=20, null=True, unique=True)
     gender = models.CharField(max_length=1, null=True)
     birthday = models.CharField(max_length=25, null=True)
 
@@ -59,6 +59,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
+
+    is_superuser = models.BooleanField(default=True)
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
