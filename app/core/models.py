@@ -247,12 +247,12 @@ class Investment(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     bonus = models.CharField(max_length=255)
     status = models.CharField(max_length=20, default='waiting')
-    ordinary = models.IntegerField(null=True)
+    created_at = models.DateTimeField(default=timezone.now, null=False)
     user_id = models.CharField(max_length=255, default='')
     paid = models.BooleanField(default=False)
     project = models.ForeignKey(
         Project,
-        on_delete=models.DO_NOTHING,
+        on_delete=models.CASCADE,
     )
 
 

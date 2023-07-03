@@ -327,7 +327,7 @@ class InvestmentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Investment
-        fields = ('id', 'bonus', 'status', 'user_id', 'project', 'ordinary')
+        fields = ('id', 'bonus', 'status', 'user_id', 'project')
         read_only_fields = ['id']
     
     def get_project(self, validate_data):
@@ -347,7 +347,9 @@ class InvestmentManagementSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data, **kwargs):  
         """create an investment"""
-        previous = Investment.objects.filter(user_id=validated_data['user_id'])
-        validated_data['ordinary'] = len(previous)+1
-        investment = Investment.objects.create(**validated_data)
+        investment = Investment.objects.create(
+            bonus=validated_data['bonus'],
+            user_id=validated_data['user_id'],
+            project=validated_data['project']
+        )
         return investment

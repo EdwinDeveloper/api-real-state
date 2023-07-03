@@ -68,9 +68,20 @@ class UserSerializer(serializers.ModelSerializer):
     def get_investments(self, validate_data):
         """get all user invertions"""
         user = User.objects.get(email=validate_data)
-        investments = Investment.objects.filter(user_id=user.id)
-        serializer = InvestmentSerializer(investments, many=True)
-        return serializer.data
+        investments = Investment.objects.filter(user_id=user.id).order_by('created_at')
+        investments_with_ordinary = [
+            {
+                'id': investment.id,
+                'status': investment.status,
+                'user_id': investment.user_id,
+                'bonus': investment.bonus,
+                'created_at': investment.created_at,
+                'project': ProjectSerializer(investment.project).data,
+                'ordinary': index + 1
+            }
+            for index, investment in enumerate(investments)
+        ]
+        return investments_with_ordinary
 
     def get_videos(self, validated_data):
         """get all videos"""
