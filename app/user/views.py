@@ -112,7 +112,25 @@ class UserViewSets(viewsets.ModelViewSet):
             user.save()
             return Response({ 'is_staff': user.is_staff }, status.HTTP_200_OK)
         except:
-            return Response( { "error": "error" } , status. HTTP_400_BAD_REQUEST)
+            return Response( { "error": "error" } , status.HTTP_400_BAD_REQUEST)
+    
+    @action(methods=['POST'], detail=False, url_path='lower-email')
+    def lower_email(self, request, pk=None):
+        """Lower email to lower case"""
+        try:
+            user = User.objects.filter(email=request.data['email']).first()
+            if user:
+                username, domain = user.email.split("@")
+                lowercase_username = username.lower()
+                lowercase_email = lowercase_username + "@" + domain
+                user.email = lowercase_email
+                user.save()
+                return Response({ "email": lowercase_email })
+            else:
+                return Response({ "error": "Usuario no existe" })
+            
+        except:
+            return Response( {  "error": "error" } , status.HTTP_400_BAD_REQUEST )
 
 class UserEndSerializer(viewsets.ModelViewSet):
 
