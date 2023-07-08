@@ -5,10 +5,10 @@ psql -U REALSTATEPRODADMIN -h localhost -p 5432
 # CREATING A SQL BACKUP FROM OUTSIDE A CONTAINER
 docker exec -t <container_id> pg_dump --dbname=<database_name> --file=/root/backup/dump_.sql -U <username>
 
-docker exec -t ee44bf164981 pg_dump --dbname=REALSTATEPRODDB --file=/dump_realstate.sql -U REALSTATEPRODADMIN
+docker exec -t bb560770f891 pg_dump --dbname=REALSTATEPRODDB --file=/dump_realstate.sql -U REALSTATEPRODADMIN
 
 # COPY OUR DATABASE INTO OUR DOCKER CONTAINER
-docker cp ee44bf164981:/dump_realstate.sql /root/
+docker cp bb560770f891:/dump_realstate.sql /root/
 
 docker cp /Users/edwingiovanni/Desktop/dump_realstate.sql 157f080ee393:/
 
